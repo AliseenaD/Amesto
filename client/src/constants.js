@@ -1,0 +1,1 @@
+export const requestedScopes = ["profile", "email", `${process.env.REACT_APP_CUSTOM_STARTER}roles`];

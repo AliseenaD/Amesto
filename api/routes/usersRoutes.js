@@ -1,5 +1,7 @@
+const dotenv = require('dotenv');
+dotenv.config();  // Load environment variables
 const express = require('express');
-const router = express.Router;
+const router = express.Router();
 const { auth } = require('express-oauth2-jwt-bearer');
 const User = require('../models/Users');
 const Products = require('../models/Products');
@@ -7,7 +9,7 @@ const Products = require('../models/Products');
 // Auth0 middleware
 const requireAuth = auth({
     audience: process.env.AUTH0_AUDIENCE,
-    issuer: process.env.AUTH0_ISSUER,
+    issuerBaseURL: process.env.AUTH0_ISSUER,
     tokenSigningAlg: 'RS256',
 });
 
@@ -16,19 +18,21 @@ router.post('/verify-user', requireAuth, async (req, res) => {
     const auth0Id = req.auth.payload.sub;
     const email = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/email`];
     const name = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/name`];
+    const roles = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/roles`];
     try {
         let user = await User.findOne({ auth0Id });
         if (user) {
-            res.json(user);
+            res.json({ user, created: false });
         }
         else {
             const newUser = new User({
                 auth0Id,
                 name,
                 email,
+                role: roles[0]
             });
             await newUser.save();
-            res.json(newUser);
+            res.json({ user: newUser, created: true });
         }
     }
     catch (error) {
@@ -81,7 +85,7 @@ router.delete('/cart/:productId', requireAuth, async (req, res) => {
 // Update quantity or add an item to shopping cart
 router.patch('/cart', requireAuth, async (req, res) => {
     const auth0Id = req.auth.payload.sub;
-    const { productId, quantity } = req.params;
+    const { productId, quantity } = req.body;
     // Data validation
     if (!productId || !quantity || quantity < 1) {
         return res.status(400).json({ error: 'Invalid product ID or quantity' });

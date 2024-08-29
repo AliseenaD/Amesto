@@ -1,5 +1,7 @@
+const dotenv = require('dotenv');
+dotenv.config();  // Load environment variables
 const express = require('express');
-const router = express.Router;
+const router = express.Router();
 const { auth } = require('express-oauth2-jwt-bearer');
 const OrderHistory = require('../models/OrderHistory');
 const User = require('../models/Users');
@@ -7,12 +9,23 @@ const User = require('../models/Users');
 // Auth0 middleware
 const requireAuth = auth({
     audience: process.env.AUTH0_AUDIENCE,
-    issuer: process.env.AUTH0_ISSUER,
+    issuerBaseURL: process.env.AUTH0_ISSUER,
     tokenSigningAlg: 'RS256',
 });
 
+// Middleware to check if a user is admin
+const checkAdmin = (req, res, next) => {
+    const roles = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/roles`];
+    if (roles && roles.includes('Admin')) {
+        next();
+    }
+    else {
+        res.status(403).send('Access denied');
+    }
+};
+
 // Get all order history
-router.get('/', requireAuth, async (req, res) => {
+router.get('/', requireAuth, checkAdmin, async (req, res) => {
     try {
         const orders = await OrderHistory.find();
         res.json(orders);
@@ -42,9 +55,6 @@ router.post('/', requireAuth, async (req, res) => {
             orderStatus: 'Pending'
         });
         const savedOrder = await newOrder.save();
-        // Add order to the users relational column
-        user.orderHistory.push(savedOrder._id);
-        await user.save();
         res.status(201).json({ message: 'Successfully placed order', order: savedOrder });
     }
     catch (error) {
@@ -54,7 +64,7 @@ router.post('/', requireAuth, async (req, res) => {
 }); 
 
 // Mark order as complete
-router.patch('/:orderId', requireAuth, async (req, res) => {
+router.patch('/:orderId', requireAuth, checkAdmin, async (req, res) => {
     const { orderId } = req.params;
     const { processUpdate } = req.body;
     // Data validation
@@ -77,3 +87,5 @@ router.patch('/:orderId', requireAuth, async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+module.exports = router;
