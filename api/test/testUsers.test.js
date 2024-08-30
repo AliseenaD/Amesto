@@ -15,7 +15,6 @@ jest.mock('express-oauth2-jwt-bearer', () => ({
             payload: {
                 sub: 'auth0|123456',
                 [`${process.env.AUTH0_AUDIENCE}/email`]: 'test@example.com',
-                [`${process.env.AUTH0_AUDIENCE}/name`]: 'Test User',
                 [`${process.env.AUTH0_AUDIENCE}/roles`]: ['Basic']
             }
         };
@@ -60,7 +59,7 @@ describe('User API routes', () => {
         });
 
         it('Should return user if already in table', async () => {
-            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', name: 'Test User', role: 'Basic' });
+            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', role: 'Basic' });
             await user.save();
             const res = await request(app).post('/verify-user');
             expect(res.statusCode).toBe(200);
@@ -71,7 +70,7 @@ describe('User API routes', () => {
 
     describe('GET /', () => {
         it('Should return users that are in the table', async() => {
-            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', name: 'Test User', role: 'Basic' });
+            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', role: 'Basic' });
             await user.save();
             const res = await request(app).get('/');
             expect(res.statusCode).toBe(200);
@@ -85,7 +84,7 @@ describe('User API routes', () => {
 
     describe('PATCH /cart', () => {
         it('Should add a new item to cart', async () => {
-            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', name: 'Test User', role: 'Basic' });
+            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', role: 'Basic' });
             await user.save();
 
             const variant = new ProductVariants({
@@ -134,7 +133,7 @@ describe('User API routes', () => {
                 updatedAt: "2024-08-26T15:00:00Z"
             });
             await product.save();
-            const user = new User({ auth0Id: 'auth0|123456', name: 'Test User', email: 'test@example.com', role: 'Basic' });
+            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', role: 'Basic' });
             await user.save();
             const res = await request(app)
             .patch('/cart')
@@ -168,7 +167,7 @@ describe('User API routes', () => {
                 updatedAt: "2024-08-26T15:00:00Z"
             });
             await product.save();
-            const user = new User({ auth0Id: 'auth0|123456', name: 'Test User', email: 'test@example.com', role: 'Basic' });
+            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', role: 'Basic' });
             await user.save();
             await request(app).patch('/cart').send({ productId: product._id, quantity: 2 });
             const res = await request(app).delete(`/cart/${product._id}`);
@@ -196,7 +195,7 @@ describe('User API routes', () => {
                 updatedAt: "2024-08-26T15:00:00Z"
             });
             await product.save();
-            const user = new User({ auth0Id: 'auth0|123456', name: 'Test User', email: 'test@example.com', role: 'Basic' });
+            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', role: 'Basic' });
             await user.save();
             await request(app).patch('/cart').send({ productId: product._id, quantity: 2 });
             const res = await request(app).delete('/cart/48274824');
@@ -237,7 +236,7 @@ describe('User API routes', () => {
                 updatedAt: "2024-08-26T15:00:00Z"
             });
             await product.save();
-            const user = new User({ auth0Id: 'auth0|123456', name: 'Test User', email: 'test@example.com', role: 'Basic' });
+            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', role: 'Basic' });
             await user.save();
             await request(app).patch('/cart').send({ productId: product._id, quantity: 2 });
             const res = await request(app).get('/cart');
@@ -264,7 +263,7 @@ describe('User API routes', () => {
                 updatedAt: "2024-08-26T15:00:00Z"
             });
             await product.save();
-            const user = new User({ auth0Id: 'auth0|123456', name: 'Test User', email: 'test@example.com', role: 'Basic' });
+            const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', role: 'Basic' });
             await user.save();
             const addToCartRes = await request(app).patch('/cart').send({ productId: product._id, quantity: 2 });
             expect(addToCartRes.statusCode).toBe(500);
@@ -312,7 +311,6 @@ describe('User API routes', () => {
             // Create a user with the order history
             const user = new User({
                 auth0Id: 'auth0|123456',
-                name: 'Test User',
                 email: 'test@example.com',
                 role: 'Basic',
                 orderHistory: [orderHistory._id]

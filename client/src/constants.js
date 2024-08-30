@@ -1,1 +1,1 @@
-export const requestedScopes = ["profile", "email", `${process.env.REACT_APP_CUSTOM_STARTER}roles`];
+export const requestedScopes = ["profile", "email", `${process.env.REACT_APP_AUTH0_AUDIENCE}/roles`];

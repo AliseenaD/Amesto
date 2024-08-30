@@ -16,7 +16,6 @@ jest.mock('express-oauth2-jwt-bearer', () => ({
             payload: {
                 sub: 'auth0|123456',
                 [`${process.env.AUTH0_AUDIENCE}/email`]: 'test@example.com',
-                [`${process.env.AUTH0_AUDIENCE}/name`]: 'Test User',
                 [`${process.env.AUTH0_AUDIENCE}/roles`]: ['Admin']
             }
         };

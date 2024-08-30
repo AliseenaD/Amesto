@@ -11,15 +11,16 @@ const requireAuth = auth({
     audience: process.env.AUTH0_AUDIENCE,
     issuerBaseURL: process.env.AUTH0_ISSUER,
     tokenSigningAlg: 'RS256',
-});
+})
 
 // Verify user route
 router.post('/verify-user', requireAuth, async (req, res) => {
-    const auth0Id = req.auth.payload.sub;
-    const email = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/email`];
-    const name = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/name`];
-    const roles = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/roles`];
     try {
+        const auth0Id = req.auth.payload.sub;
+        const email = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/email`];
+        // Roles might not be present, so we'll use a default if it's not there
+        const roles = req.auth.payload[`${process.env.AUTH0_AUDIENCE}/roles`] || ['user'];
+
         let user = await User.findOne({ auth0Id });
         if (user) {
             res.json({ user, created: false });
@@ -27,7 +28,6 @@ router.post('/verify-user', requireAuth, async (req, res) => {
         else {
             const newUser = new User({
                 auth0Id,
-                name,
                 email,
                 role: roles[0]
             });
@@ -37,7 +37,7 @@ router.post('/verify-user', requireAuth, async (req, res) => {
     }
     catch (error) {
         console.error('Error verifying user:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: error.message || 'internal server error' });
     }
 });
 

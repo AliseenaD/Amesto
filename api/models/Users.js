@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     auth0Id: { type: String, required: true, unique: true },
     role: { type: String, required: true, enum: ['Admin', 'Basic'] },
-    name: { type: String, required: true, unique: false },
     email: { type: String, required: true, unique: true },
     orderHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderHistory' }],
     shoppingCart: [

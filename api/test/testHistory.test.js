@@ -16,7 +16,6 @@ jest.mock('express-oauth2-jwt-bearer', () => ({
             payload: {
                 sub: 'auth0|123456',
                 [`${process.env.AUTH0_AUDIENCE}/email`]: 'test@example.com',
-                [`${process.env.AUTH0_AUDIENCE}/name`]: 'Test User',
                 [`${process.env.AUTH0_AUDIENCE}/roles`]: ['Admin']
             }
         };
@@ -112,7 +111,7 @@ describe('Order history API routes', () => {
           });
           await product.save();
       
-          const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', name: 'Test User', role: 'Admin' });
+          const user = new User({ auth0Id: 'auth0|123456', email: 'test@example.com', role: 'Admin' });
           await user.save();
       
           const orderItem = [{ productId: product._id, quantity: 2 }];
