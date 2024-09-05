@@ -6,6 +6,7 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const { storage } = require('../config/firebase'); // Import initalized firebase storage
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
+const { bucket } = require('../config/firebaseAdmin');
 const ProductVariants = require('../models/ProductVariants');
 
 // Multer setup for handling file uploads
@@ -67,6 +68,27 @@ router.get('/:productId', async (req, res) => {
     }
 });
 
+// Get product variants by ID
+router.get('/variants/:variantId', async (req, res) => {
+    const { variantId } = req.params;
+    if (!variantId) {
+        return res.status(400).json({ error: 'Invalid variant ID' });
+    }
+    try {
+        const variant = await ProductVariants.findById(variantId);
+        if (variant) {
+            res.json(variant);
+        }
+        else {
+            res.status(404).json({ error: 'Variant not found' });
+        }
+    }
+    catch (error) {
+        console.error('Error fetching the variant:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 // Change the price or quantity of a product 
 // ONLY FOR ADMIN FUNCTIONALITY
 router.patch('/variants/:variantId', requireAuth, checkAdmin, async (req, res) => {
@@ -122,37 +144,62 @@ router.delete('/:productId', requireAuth, checkAdmin, async (req, res) => {
 router.post('/', requireAuth, checkAdmin, upload.single('image'), async (req, res) => {
     const { type, brand, model, storage: storageSize, variants } = req.body;
     // Data validation
-    if (!type || !brand || !model || !storage || !variants || !req.file) {
+    if (!type || !brand || !model || !variants || !req.file) {
         return res.status(400).json({ message: 'Input cannot be invalid' });
     }
     try {
-        // Upload photo portion of post
         const file = req.file;
         const fileName = `${uuidv4()}_${file.originalname}`;
-        const fileRef = ref(storage, `product_images/${fileName}`);
-        // Upload the file to Firebase Storage
-        await uploadBytes(fileRef, file.buffer, { contentType: file.mimetype });
-        // Get the public URL of the uploaded file
-        const publicUrl = await getDownloadURL(fileRef);
+        const fileUpload = bucket.file(`product_images/${fileName}`);
+    
+        const blobStream = fileUpload.createWriteStream({
+            metadata: {
+            contentType: file.mimetype
+          }
+        });
+    
+        blobStream.on('error', (error) => {
+            console.error('Error uploading to Firebase Storage:', error);
+            res.status(500).json({ message: 'Error uploading file' });
+        });
+    
+        blobStream.on('finish', async () => {
+            // Make the file public
+            await fileUpload.makePublic();
 
-        // Create new product
-        const newProduct = new Products({ type, brand, model, storage: Number(storageSize), picture: publicUrl });
-        const savedProduct = await newProduct.save();
-        // Create and save product variants if provided
-        if (variants && variants.length > 0) {
-            // Attach productId to each variant and save
-            const variantPromises = variants.map(variant => {
-                const newVariant = new ProductVariants({
-                    ...variant,
-                    productId: savedProduct._id
-                });
-                return newVariant.save();
-            });
-            await Promise.all(variantPromises);
-        }
-        res.status(201).json({ message: 'Successfully created a new product' });
-    }
-    catch (error) {
+            // Get the public URL
+            const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`;
+
+            // Create new product
+            const newProduct = new Products({ type, brand, model, storage: Number(storageSize), picture: publicUrl });
+            let parsedVariants;
+            try {
+                parsedVariants = JSON.parse(variants);
+            } catch (error) {
+                console.error('Error parsing variants:', error);
+                return res.status(400).json({ message: 'Invalid variants data' });
+            }
+
+            if (Array.isArray(parsedVariants) && parsedVariants.length > 0) {
+                for (const variant of parsedVariants) {
+                    const newVariant = new ProductVariants({
+                        color: variant.color,
+                        price: Number(variant.price),
+                        quantity: Number(variant.quantity),
+                        productId: newProduct._id
+                    });
+                    const savedVariant = await newVariant.save();
+                
+                    // Add the saved variant's ID to the product's variants array
+                    newProduct.variants.push(savedVariant._id);
+                }
+            }
+            await newProduct.save();
+            res.status(201).json({ message: 'Successfully created a new product' });
+        });
+    
+        blobStream.end(file.buffer);
+    } catch (error) {
         console.error('Error creating a new product:', error);
         res.status(500).json({ message: 'Internal server error' });
     }

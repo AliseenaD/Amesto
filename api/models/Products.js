@@ -4,7 +4,7 @@ const productsSchema = mongoose.Schema({
     type: { type: String, required: true, unique: false },
     brand: { type: String, required: true, unique: false },
     model: { type: String, required: true, unique: false },
-    storage: { type: Number, required: true, unique: false },
+    storage: { type: Number, required: false, unique: false },
     picture: { type: String, required: true, unique: false },
     variants: [{ type: mongoose.Schema.ObjectId, ref: 'ProductVariants' }],
     isDeleted: { type: Boolean, default: false },
