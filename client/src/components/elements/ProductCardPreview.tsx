@@ -2,17 +2,9 @@ import React, { useEffect, useState } from "react";
 import { getVariants } from "../../utility/api";
 import '../styles/elementStyles.css';
 import ProductModal from "./ProductModal.tsx";
+import { Variants } from "../../types/productTypes.ts";
 
-// Define interface of variants
-interface Variants {
-    _id: string;
-    productId: string;
-    color: string;
-    price: number;
-    quantity: number;
-}
-
-export default function ProductCardPreview({ product }) {
+export default function ProductCardPreview({ product, displayStorage }) {
     const [variantColors, setVariantColors] = useState<string[]>([]); // For the colors
     const [prodVariants, setProdVariants] = useState<Variants[]>([]); // For the variants to pass to product info
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,10 +62,13 @@ export default function ProductCardPreview({ product }) {
                     { handleCountry() }
                     { 
                         variantColors ? (
-                            <div className="color-container">
-                                { variantColors.map((color) => (
-                                    <div className="color-circle" key={color} style={{backgroundColor: `${color}`}}></div>
-                                )) }
+                            <div className="color-storage">
+                                <div className="color-container">
+                                    { variantColors.map((color) => (
+                                        <div className="color-circle" key={color} style={{backgroundColor: `${color}`}}></div>
+                                    )) }
+                                </div>
+                                { displayStorage ? <p className="preview-product-country" id="storage-text">{product.storage}GB</p> : '' }
                             </div>
                         ) : '' 
                     }

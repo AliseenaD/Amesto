@@ -3,8 +3,9 @@ import '../styles/elementStyles.css';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { Fade } from "react-awesome-reveal";
 import ProductCardPreview from "./ProductCardPreview.tsx";
+import { CardScrollProps } from "../../types/productTypes.ts";
 
-export default function CardScroll({ title, products }) {
+export default function CardScroll({ title, products, displayStorage }: CardScrollProps) {
     const containerRef: RefObject<HTMLUListElement> = useRef(null);
 
     function handleScroll(direction: 'left' | 'right') {
@@ -27,7 +28,7 @@ export default function CardScroll({ title, products }) {
                     <ul className="cards-list" ref={containerRef}>
                         {products.map((product) => (
                             <li key={product._id}>
-                                <ProductCardPreview product={product} />
+                                <ProductCardPreview product={product} displayStorage={displayStorage} />
                             </li>
                         ))}
                     </ul>

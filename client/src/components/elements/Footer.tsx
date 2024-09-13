@@ -8,10 +8,10 @@ export default function Footer() {
             <div className="footer-content">
                 <hr></hr>
                 <div className="footer-text">
-                    <p id="store-name">AMESTO</p>
-                    <p className="store-text">Store operated by Amirhossein Elmzadeh</p>
-                    <p className="store-text">Location: 1203 Africa Street, Tehran</p>
-                    <p className="store-text">Whatsapp: 33671255672</p>
+                    <p id="store-name">آمستو</p>
+                    <p className="store-text">فروشگاه با مدیریت امیرحسین علم زاده</p>
+                    <p className="store-text">مکان: تهران، خیابان آفریقا، پلاک 1203</p>
+                    <p className="store-text">واتساپ: 33671255672</p>
                 </div>
             </div>
         </Fade>

@@ -24,9 +24,9 @@ export default function BannerImage({ image, title }) {
     // Dynamically update font size
     function getTitleSize(width) {
         if (width <= 767) {
-            return `${Math.max(3, width / 130)}rem`;
+            return `${Math.max(3, width / 100)}rem`;
         }
-        return '7rem';
+        return '9rem';
     }
 
     return (

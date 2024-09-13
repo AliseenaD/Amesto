@@ -43,7 +43,7 @@ export default function NavBar() {
         <Fade triggerOnce direction="up">
             <div className="nav-content">
                 <div className="home-link">
-                    <Link className="nav-link" id="home-link" to='/'>AMESTO</Link>
+                    <Link className="nav-link" id="home-link" to='/'>آمستو</Link>
                 </div>
                 <div className="hamburger" onClick={() => setMenu(!menu)} >
                     <div className="burger-line"></div>
@@ -52,16 +52,16 @@ export default function NavBar() {
                 </div>
                 <ul className={`list-links ${menu ? ' open' : ''}`}>
                     <li className="left-links">
-                        <Link className="nav-link" to='/phones'>PHONES</Link>
+                        <Link className="nav-link" to='/phones'>تلفن ها</Link>
                     </li>
                     <li className="left-links">
-                        <Link className="nav-link" to='/speakers'>SPEAKERS</Link>
+                        <Link className="nav-link" to='/speakers'>بلندگوها</Link>
                     </li>
                     {
                         isAuthenticated ? 
                         <>
-                            <li className="right-links"><Link className="nav-link" id="cart" to='/cart'>{windowDim.width >= 767 ? <TiShoppingCart size={30} color="#16181c" /> : 'CART'}</Link></li>
-                            <li className="right-links"><Link className="nav-link" id="profile" to='/profile'>{windowDim.width >= 767 ? <BiSolidUser size={30} color="#16181c" /> : 'PROFILE'}</Link></li>
+                            <li className="right-links"><Link className="nav-link" id="cart" to='/cart'>{windowDim.width >= 767 ? <TiShoppingCart size={30} color="#16181c" /> : 'سبد خرید'}</Link></li>
+                            <li className="right-links"><Link className="nav-link" id="profile" to='/profile'>{windowDim.width >= 767 ? <BiSolidUser size={30} color="#16181c" /> : 'نمایه'}</Link></li>
                         </>
                         : 
                         <li className="right-links">

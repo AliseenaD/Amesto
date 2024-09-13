@@ -4,15 +4,8 @@ import { getProducts } from "../../utility/api";
 import { MdDelete } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
+import { Product } from "../../types/productTypes";
 import '../styles/elementStyles.css';
-
-// Provide the product structure
-interface Product {
-    _id: string;
-    brand: string;
-    model: string;
-    storage: number;
-}
 
 export default function DeleteProduct() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -50,6 +43,9 @@ export default function DeleteProduct() {
     // Handle search text updates
     const handleSearch = (e) => {
         setSearchText(e.target.value);
+        if (e.target.value === '') {
+            handleDelete();
+        }
     }
 
     // Handle when enter button pressed

@@ -1,4 +1,75 @@
 /*
+CART PRODUCT STYLES
+*/
+
+
+/*
+SEARCH BAR STYLES
+*/
+.search-bar-container {
+    width: 60%;
+    position: absolute;
+    top: 425px;
+    left: 20%;
+    z-index: 1;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 20px;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 8px 12px 4px rgba(0, 0, 0, 0.25);
+}
+
+.search-bar-icons {
+    position: absolute;
+    top: -3rem;
+    right: 0rem;
+    cursor: pointer;
+    color: var(--secondary-color);
+}
+
+.search-results {
+    margin-top: 2rem;
+    box-sizing: border-box;
+    background-color: #bdbdbd;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-time), opacity 0.3s ease-in-out;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-around;
+    align-items: center;
+    box-sizing: border-box;
+    opacity: 0;
+}
+
+.search-open {
+    padding: 2rem 0;
+    max-height: 550px;
+    overflow-y: scroll;
+    opacity: 1;
+}
+
+/*
+PHONES SCROLL STYLES
+*/
+.brand-title {
+    margin-top: 3rem;
+    font-size: 40px;
+    box-sizing: border-box;
+    padding: 0 2rem;
+    font-weight: 400;
+}
+
+.brand-container {
+    margin-top: 5rem;
+}
+
+/*
 PRODUCT INFORMATION STYLES
 */
 
@@ -190,6 +261,7 @@ NAVBAR STYLES
 }
 
 .nav-link {
+    font-size: 20px;
     color: var(--primary-color);
     text-decoration: none;
     cursor: pointer;
@@ -521,6 +593,19 @@ PREVIEW CARD STYLES
     font-weight: 300;
 }
 
+.color-storage {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 1rem;
+}
+
+#storage-text {
+    position: relative;
+    top: -0.4rem;
+    font-size: 18px;
+}
+
 .color-container {
     position: relative;
     top: -0.5rem;
@@ -666,6 +751,14 @@ FOOTER STYLES
     .product-info-description {
         width: 70%;
     }
+
+    /*
+    SEARCH BAR STYLES
+    */
+    .search-bar-container {
+        width: 80%;
+        left: 8%;
+    }
 }
 
 @media screen and (max-width: 500px) {
@@ -696,5 +789,13 @@ FOOTER STYLES
     .hero-text {
         width: 90%;
         margin: 0 1rem;
+    }
+
+    /*
+    SEARCH BAR STYLES
+    */
+    .search-bar-container {
+        width: 80%;
+        left: 7%;
     }
 }

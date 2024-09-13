@@ -8,15 +8,7 @@ import { getProducts } from "../../utility/api.js";
 import CardScroll from "../elements/CardScroll.tsx";
 import HeroBanner from "../elements/HeroBanner.tsx";
 import Footer from "../elements/Footer.tsx";
-
-// Provide the product structure
-interface Product {
-    _id: string;
-    type: string;
-    brand: string;
-    model: string;
-    picture: string;
-}
+import { Product } from "../../types/productTypes.ts";
 
 export default function Home() {
     const { logout } = useAuth0();
@@ -60,10 +52,10 @@ export default function Home() {
     return (
         <>
             <NavBar />
-            <BannerImage title='AMESTO' image={BannerPhoto} />
-            <CardScroll title='Choose from our smartphone collection.' products={phones} />
-            <CardScroll title='Check out our state of the art speakers.' products={speakers} />
-            <HeroBanner text='BRAND NEW DEVICES BROUGHT TO YOU.' image={HeroPic} />
+            <BannerImage title='آمستو' image={BannerPhoto} />
+            <CardScroll title='از مجموعه گوشی های هوشمند ما انتخاب کنید' products={phones} />
+            <CardScroll title='بلندگوهای پیشرفته ما را بررسی کنید' products={speakers} />
+            <HeroBanner text='دستگاه های کاملاً جدید برای شما آورده شده است' image={HeroPic} />
             <Footer />
             <button onClick={() => logout()}>Logout</button>
         </>
