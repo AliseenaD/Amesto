@@ -5,6 +5,7 @@ const router = express.Router();
 const { auth } = require('express-oauth2-jwt-bearer');
 const User = require('../models/Users');
 const Products = require('../models/Products');
+const ProductVariants = require('../models/ProductVariants');
 
 // Auth0 middleware
 const requireAuth = auth({
@@ -57,18 +58,18 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 // Delete an item from the shopping cart
-router.delete('/cart/:productId', requireAuth, async (req, res) => {
+router.delete('/cart', requireAuth, async (req, res) => {
     const auth0Id = req.auth.payload.sub;
-    const { productId } = req.params;
-    if (!productId) {
-        return res.status(400).json({ error: 'Invalid product ID' });
+    const { productId, variantId } = req.body;
+    if (!productId || !variantId) {
+        return res.status(400).json({ error: 'Invalid product ID or variant ID' });
     }
     try {
         const user = await User.findOne({ auth0Id });
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const updatedCart = user.shoppingCart.filter(item => item.productId.toString() !== productId);
+        const updatedCart = user.shoppingCart.filter(item => item.productId.toString() !== productId && item.variantId.toString() !== variantId);
         if (updatedCart.length === user.shoppingCart.length) {
             return res.status(404).json({ message: 'Product not found in cart' });
         }
@@ -85,9 +86,9 @@ router.delete('/cart/:productId', requireAuth, async (req, res) => {
 // Update quantity or add an item to shopping cart
 router.patch('/cart', requireAuth, async (req, res) => {
     const auth0Id = req.auth.payload.sub;
-    const { productId, quantity } = req.body;
+    const { productId, variantId, quantity } = req.body;
     // Data validation
-    if (!productId || !quantity || quantity < 1) {
+    if (!productId || !variantId || !quantity || quantity < 1) {
         return res.status(400).json({ error: 'Invalid product ID or quantity' });
     }
     try {
@@ -95,19 +96,31 @@ router.patch('/cart', requireAuth, async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const productIndex = user.shoppingCart.findIndex(item => item.productId.toString() === productId);
+
+        const cartItemIndex = user.shoppingCart.findIndex(item => 
+            item.productId.toString() === productId && item.variantId.toString() === variantId
+        );
         // If product in cart update index
-        if (productIndex > -1) {
-            user.shoppingCart[productIndex].quantity = quantity;
+        if (cartItemIndex > -1) {
+            user.shoppingCart[cartItemIndex].quantity = quantity;
         }
         // Otherwise push new item onto shopping cart
         else {
             // Throw error if product is deleted
             const product = await Products.findById(productId);
-            if (product.isDeleted) {
-                throw new Error('This product is no longer available');
+            if (!product) {
+                return res.status(404).json({ error: 'Product not found' });
             }
-            user.shoppingCart.push({ productId, quantity });
+            if (product.isDeleted) {
+                return res.status(404).json({ error: 'Product was deleted' });
+            }
+            // Verify the variant exists and belongs to the product
+            const variant = await ProductVariants.findById(variantId);
+            if (!variant || variant.productId.toString() !== productId) {
+                return res.status(400).json({ error: 'Invalid product variant' });
+            }
+
+            user.shoppingCart.push({ productId, variantId, quantity });
         }
         await user.save();
         res.json(user.shoppingCart);
@@ -122,7 +135,16 @@ router.patch('/cart', requireAuth, async (req, res) => {
 router.get('/cart', requireAuth, async (req, res) => {
     const auth0Id = req.auth.payload.sub;
     try {
-        const user = await User.findOne({ auth0Id }).populate('shoppingCart.productId');
+        const user = await User.findOne({ auth0Id })
+        .populate({
+            path: 'shoppingCart.productId',
+            model: Products,
+            select: '-variants' // Exclude the variants array from the product
+        })
+        .populate({
+            path: 'shoppingCart.variantId',
+            model: ProductVariants
+        });
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }

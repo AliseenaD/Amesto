@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getVariants } from "../../utility/api";
+import { getVariants } from "../../utility/productsApi.js";
 import '../styles/elementStyles.css';
 import ProductModal from "./ProductModal.tsx";
 import { Variants } from "../../types/productTypes.ts";

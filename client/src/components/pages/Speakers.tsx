@@ -3,7 +3,7 @@ import NavBar from "../elements/NavBar.tsx";
 import BannerImage from '../elements/BannerImage.tsx';
 import SpeakerImg from '../../assets/speakerHero.jpg';
 import { Product } from "../../types/productTypes.ts";
-import { getProducts } from "../../utility/api.js";
+import { getProducts } from "../../utility/productsApi.js";
 import Footer from "../elements/Footer.tsx";
 import CardScroll from "../elements/CardScroll.tsx";
 import { ProductDictionary } from "../../types/productTypes.ts";

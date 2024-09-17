@@ -3,7 +3,7 @@ import NavBar from "../elements/NavBar.tsx";
 import BannerImage from '../elements/BannerImage.tsx';
 import BannerPhoto from "../../assets/HomeBanner.jpg";
 import { Product } from "../../types/productTypes.ts";
-import { getProducts } from "../../utility/api.js";
+import { getProducts } from "../../utility/productsApi.js";
 import { PhoneBrandDictionary } from "../../types/productTypes.ts";
 import CardScroll from "../elements/CardScroll.tsx";
 import SearchBar from "../elements/SearchBar.tsx";

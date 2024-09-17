@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Fade } from "react-awesome-reveal";
-import { getProducts } from "../../utility/api";
-import { MdDelete } from "react-icons/md";
+import { getProducts } from "../../utility/productsApi";
+import { CiCircleRemove } from "react-icons/ci";
 import { IoSearch } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 import { Product } from "../../types/productTypes";
@@ -68,14 +68,14 @@ export default function DeleteProduct() {
                             products.map((product) => (
                                 <div className="individual-product" key={product._id}>
                                     <p>{product.brand} {product.model} {product.storage}GB</p>
-                                    <MdDelete className="delete-icon" size={30} />
+                                    <CiCircleRemove className="delete-icon" size={30} />
                                 </div>
                             ))
                         ) : isSearched && searchedProducts.length > 0 ? (
                             searchedProducts.map((product) => (
                                 <div className="individual-product" key={product._id}>
                                     <p>{product.brand} {product.model} {product.storage}GB</p>
-                                    <MdDelete className="delete-icon" size={30} />
+                                    <CiCircleRemove className="delete-icon" size={30} />
                                 </div>
                             ))
                         ) : <p>No products</p>

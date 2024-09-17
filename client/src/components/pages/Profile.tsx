@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../elements/NavBar.tsx";
 import { useAuthToken } from "../../AuthTokenContext.js";
 import AdminForms from "../elements/AdminForms.tsx";
-import { getProfile } from "../../utility/api.js";
+import { getProfile } from "../../utility/profileApi.js";
 
 export default function Profile() {
     const { accessToken } = useAuthToken();

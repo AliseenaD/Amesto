@@ -6,7 +6,7 @@ import { TiShoppingCart } from "react-icons/ti";
 import '../styles/elementStyles.css';
 import { Fade } from "react-awesome-reveal";
 import { useAuth0 } from "@auth0/auth0-react";
-import { addToCart } from "../../utility/api";
+import { addToCart } from "../../utility/shoppingCartApi";
 import { useAuthToken } from "../../AuthTokenContext";
 
 export default function ProductModal({ product, variants, handleClose }) {
@@ -52,7 +52,7 @@ export default function ProductModal({ product, variants, handleClose }) {
             loginWithRedirect();
         }
         else if (selectedVariant.quantity >= 1) {
-            const cart = await addToCart(product, 1, accessToken);
+            const cart = await addToCart(product._id, selectedVariant._id, 1, accessToken);
             console.log(cart);
         }
     }

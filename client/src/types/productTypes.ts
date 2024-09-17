@@ -17,6 +17,13 @@ export interface Product {
     storage: number;
 }
 
+export interface CartItem {
+    productId: Product;
+    quantity: number;
+    variantId: Variants;
+    _id: string;
+}
+
 // Dictionary type for speakers and phones
 export type ProductDictionary = {
     [name: string]: Product[];
@@ -41,4 +48,11 @@ export interface SearchBarProps {
 
 export interface CartProduct {
     product: Variants;
+}
+
+export interface CartListType {
+    products: CartItem[];
+    updateCartItem:(productId: string, variantId: string, newQuantity: number) => Promise<void>;
+    deleteCartItem:(productId: string, variantId: string) => Promise<void>;
+    totalCost: number;
 }

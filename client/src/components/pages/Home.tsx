@@ -4,7 +4,7 @@ import BannerImage from "../elements/BannerImage.tsx";
 import BannerPhoto from "../../assets/HomeBanner.jpg";
 import HeroPic from "../../assets/HeroPic.jpg";
 import { useAuth0 } from "@auth0/auth0-react";
-import { getProducts } from "../../utility/api.js";
+import { getProducts } from "../../utility/productsApi.js";
 import CardScroll from "../elements/CardScroll.tsx";
 import HeroBanner from "../elements/HeroBanner.tsx";
 import Footer from "../elements/Footer.tsx";
