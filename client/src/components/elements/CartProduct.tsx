@@ -51,11 +51,11 @@ export default function CartProduct({ product, updateCartItem, deleteCartItem })
                 <img src={product.productId.picture} alt={product.productId.model}></img>
                 {fixCountry()}
                 <div className="price-section">
-                    <p className="cart-label">هر کدام</p>
+                    <p className="cart-label">قیمت</p>
                     <p className="cart-specifics">{product.variantId.price} ریال</p>
                 </div>
                 <div className="quantity-section">
-                    <p className="cart-label">مقدار</p>
+                    <p className="cart-label">تداد</p>
                     <div className="update-quantity">
                         <div className="value-increment" onClick={() => handleQuantityChange(-1)}>-</div>
                         <p className="cart-specifics">{product.quantity}</p>
@@ -66,7 +66,7 @@ export default function CartProduct({ product, updateCartItem, deleteCartItem })
                     <p className="cart-label">مجموع</p>
                     <p className="cart-specifics">{product.variantId.price * product.quantity} ریال</p>
                 </div>
-                <CiCircleRemove className="delete-item-logo" size={30} color="black" onClick={() => deleteCartItem(product.productId._id, product.variantId._id)} />
+                <button className="delete-item-logo" onClick={() => deleteCartItem(product.productId._id, product.variantId._id)}>حذف کنید</button>
             </div>
         </Fade>
     );

@@ -28,7 +28,7 @@ export default function CartList({ products, updateCartItem, deleteCartItem, tot
                     <div className="cart-info">
                         <div className="cart-cost-info">
                             <p id="total-cost-label">ارزش</p>
-                            <p id="total-quantity">مقدار</p>
+                            <p id="total-quantity">تداد</p>
                         </div>
                         <p id="total-cost-label">{totalCost} ریال</p>
                     </div>

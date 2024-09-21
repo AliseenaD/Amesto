@@ -4,6 +4,7 @@ import { Fade } from "react-awesome-reveal";
 import AddProduct from "./AddProduct.tsx";
 import AllProducts from "./AllProducts.tsx";
 import DeleteProduct from "./DeleteProduct.tsx";
+import EditProducts from "./EditProducts.tsx";
 
 export default function AdminForms() {
     const allOptions = [
@@ -11,7 +12,8 @@ export default function AdminForms() {
             title: 'Order History'
         },
         {
-            title: 'Update Price or Quantity'
+            title: 'Update Price or Quantity',
+            component: <EditProducts />
         },
         {
             title: 'Delete Product',

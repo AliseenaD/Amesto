@@ -41,6 +41,11 @@ export interface CardScrollProps {
     displayStorage?: boolean;
 }
 
+// Props for individual edit product
+export interface IndividualProps {
+    product: Product;
+}
+
 // Props for search bar
 export interface SearchBarProps {
     products: Product[]

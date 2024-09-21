@@ -22,7 +22,7 @@ export default function AllProducts() {
             console.error('Error fetching products', error);
         }
     }
-
+    
     return (
 
         <p>Orod</p>

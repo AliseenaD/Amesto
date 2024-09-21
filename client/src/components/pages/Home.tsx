@@ -52,7 +52,7 @@ export default function Home() {
     return (
         <>
             <NavBar />
-            <BannerImage title='آمستو' image={BannerPhoto} />
+            <BannerImage title='AMESTO' image={BannerPhoto} />
             <CardScroll title='از مجموعه گوشی های هوشمند ما انتخاب کنید' products={phones} />
             <CardScroll title='بلندگوهای پیشرفته ما را بررسی کنید' products={speakers} />
             <HeroBanner text='دستگاه های کاملاً جدید برای شما آورده شده است' image={HeroPic} />

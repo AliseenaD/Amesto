@@ -52,8 +52,8 @@ export default function ProductModal({ product, variants, handleClose }) {
             loginWithRedirect();
         }
         else if (selectedVariant.quantity >= 1) {
-            const cart = await addToCart(product._id, selectedVariant._id, 1, accessToken);
-            console.log(cart);
+            await addToCart(product._id, selectedVariant._id, 1, accessToken);
+            alert('Product added to cart');
         }
     }
 
@@ -67,6 +67,7 @@ export default function ProductModal({ product, variants, handleClose }) {
                             <img src={product.picture} alt={product.model}></img>
                         </div>
                         {handleCountry()}
+                        {product.type === 'Speaker' ? <br></br> : ''}
                         { product.storage ? <p id="product-storage">{product.storage}GB</p> : '' }
                         <div className="variant-list">
                             <p id="product-color">رنگ ها:</p>

@@ -43,7 +43,7 @@ export default function NavBar() {
         <Fade triggerOnce direction="up">
             <div className="nav-content">
                 <div className="home-link">
-                    <Link className="nav-link" id="home-link" to='/'>آمستو</Link>
+                    <Link className="nav-link" id="home-link" to='/'>AMESTO</Link>
                 </div>
                 <div className="hamburger" onClick={() => setMenu(!menu)} >
                     <div className="burger-line"></div>

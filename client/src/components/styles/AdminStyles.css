@@ -1,0 +1,24 @@
+.edit-product-landing {
+    max-height: 600px;
+    overflow-y: scroll;
+    position: relative;
+    margin: 0rem auto;
+    width: 90%;
+    border: 1px solid var(--primary-color);
+    border-radius: 20px;
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+.individual-edit-product {
+    box-sizing: border-box;
+    padding: 1rem 0;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color var(--transition-time);
+    background-color: transparent;
+}
+
+.individual-edit-product:hover {
+    background-color: var(--secondary-color);
+}
