@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import '../styles/elementStyles.css';
+import '../styles/adminStyles.css';
 import { Fade } from "react-awesome-reveal";
 import { useAuthToken } from "../../AuthTokenContext";
 

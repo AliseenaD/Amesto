@@ -11,7 +11,7 @@ export default function ProductCardPreview({ product, displayStorage }) {
 
     // Retrieve the variants every time products loads
     useEffect(() => {
-        fetchVariants()
+        //fetchVariants()
     }, [product]);
 
     // Alter name to provide name of country outside of title if present
@@ -35,6 +35,7 @@ export default function ProductCardPreview({ product, displayStorage }) {
         );
     }
 
+    /*
     // Get all the variants of the product
     async function fetchVariants() {
         const variants = await getVariants(product);
@@ -42,6 +43,7 @@ export default function ProductCardPreview({ product, displayStorage }) {
         const colors = variants.map((variant) => variant.color);
         setVariantColors(colors)
     }
+    */
 
     // Handle the closing of the product information card
     function handleCardClose() {

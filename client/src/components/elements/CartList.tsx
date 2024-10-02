@@ -1,5 +1,5 @@
 import React from "react";
-import '../styles/elementStyles.css';
+import '../styles/cartStyles.css';
 import { CartListType } from "../../types/productTypes";
 import CartProduct from "./CartProduct.tsx";
 import { Fade } from "react-awesome-reveal";

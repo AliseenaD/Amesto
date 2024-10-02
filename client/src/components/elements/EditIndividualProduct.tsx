@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import '../styles/AdminStyles.css';
+import '../styles/adminStyles.css';
 import { IndividualProps } from "../../types/productTypes";
 
 export default function EditIndividualProduct({ product }: IndividualProps) {
@@ -14,7 +14,9 @@ export default function EditIndividualProduct({ product }: IndividualProps) {
                 {product.brand} {product.model} {product.storage ? `- ${product.storage}GB`: ''} 
             </div>
             <div className={`individual-product-form ${settingOpen ? ' open' : ''}`}>
-                
+                <form>
+                    
+                </form>
             </div>
         </>
     );

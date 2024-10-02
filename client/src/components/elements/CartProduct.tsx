@@ -1,6 +1,5 @@
 import React from "react";
-import { CiCircleRemove } from "react-icons/ci";
-import '../styles/elementStyles.css';
+import '../styles/cartStyles.css';
 import { Fade } from "react-awesome-reveal";
 
 export default function CartProduct({ product, updateCartItem, deleteCartItem }) {

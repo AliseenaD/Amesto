@@ -5,7 +5,7 @@ import { CiCircleRemove } from "react-icons/ci";
 import { IoSearch } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 import { Product } from "../../types/productTypes";
-import '../styles/elementStyles.css';
+import '../styles/adminStyles.css';
 
 export default function DeleteProduct() {
     const [products, setProducts] = useState<Product[]>([]);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import '../styles/elementStyles.css';
+import '../styles/adminStyles.css';
 import { getProducts } from "../../utility/productsApi";
 
 export default function AllProducts() {
