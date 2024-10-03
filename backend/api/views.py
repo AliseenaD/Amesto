@@ -13,14 +13,47 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 import uuid
 from firebase_admin import storage
 import json
+from django.conf import settings
 
 # User view functionality
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated] # Could potentially remove because the authentication class is already checking access token
     authentication_classes = [Auth0Authentication]
     throttle_classes = [UserRateThrottle]
+
+    # Alter get permissions so the verify-user route is not requiring auth
+    def get_permissions(self):
+        if self.action == 'verify_user':
+            return [AllowAny()]
+        else:
+            return super().get_permissions()
+
+    # Create or verify a user
+    @action(detail=False, methods=['post'])
+    def verify_user(self, request):
+        print(f"Request headers: {request.headers}")
+        auth0_id = request.auth.payload.get('sub')
+        email = request.auth.payload.get(f"{settings.AUTH_0_AUDIENCE}/email")
+        role = request.auth.payload.get(f"{settings.AUTH_0_AUDIENCE}/roles", ['user'])
+
+        # Verify data
+        if not auth0_id or not email:
+            return Response({"Error": "Unable to retrieve user information"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get or create the user
+        user, created = User.objects.get_or_create(
+            auth0_id = auth0_id,
+            defaults= {
+                'username': email,
+                'email': email,
+                'role': role[0] if role else 'user'
+            })
+        serializer = self.get_serializer(user)
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        print(serializer.data)
+        return Response({"user": serializer.data, "created": created}, status_code)
 
     # Get the user info
     def get_queryset(self):

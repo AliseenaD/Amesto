@@ -38,13 +38,10 @@ class Auth0Authentication(JWTAuthentication):
             header = self.get_header(request)
             if header is None:
                 return None
-            
             raw_token = self.get_raw_token(header)
             if raw_token is None:
                 return None
-            
             public_key = self.get_public_key(raw_token)
-
             # Decode and verify the Auth0 token
             auth0_payload = jwt.decode(
                 raw_token,
@@ -53,26 +50,13 @@ class Auth0Authentication(JWTAuthentication):
                 audience=settings.AUTH0_AUDIENCE,
                 issuer=f'https://{settings.AUTH0_DOMAIN}/'
             )
+            auth_0_user_id = auth0_payload['sub']
 
-            auth0_user_id = auth0_payload['sub']
-            email = auth0_payload.get(f"{settings.AUTH0_AUDIENCE}/email")
-            roles = auth0_payload.get(f"{settings.AUTH0_AUDIENCE}/roles", ['user'])
-
-            # Get or create a user baces on the Auth0 ID
-            user, created = User.objects.get_or_create(
-                auth0_id=auth0_user_id,
-                defaults={
-                    'username': auth0_user_id,
-                    'email': email,
-                    'role': roles[0] if roles else 'user'
-                }
-            )
-
-            if not created:
-                # Update the user's role if it has changed
-                if user.role != roles[0]:
-                    user.role = roles[0]
-                    user.save()
+            # Try to get the user
+            try:
+                user = User.objects.get(auth0_id = auth_0_user_id)
+            except User.DoesNotExist:
+                raise AuthenticationFailed("No user found with this ID")
 
             return user, auth0_payload
         except jwt.ExpiredSignatureError:

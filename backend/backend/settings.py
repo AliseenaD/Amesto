@@ -9,10 +9,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
-
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -117,9 +113,7 @@ AUTH0_ISSUER = f'https://{AUTH0_DOMAIN}/'
 # Firebase settings
 FIREBASE_CREDENTIALS = os.getenv('FIREBASE_CREDENTIALS')
 
-# CORS settings (if needed)
-CORS_ALLOW_ALL_ORIGINS = DEBUG  # Allow all origins in development
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
-
-# If you want to allow credentials (cookies, HTTP authentication) with CORS:
-CORS_ALLOW_CREDENTIALS = True
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = False  # True if DEBUG is True
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000']

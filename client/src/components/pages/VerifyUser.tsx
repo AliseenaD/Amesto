@@ -9,14 +9,17 @@ export default function VerifyUser() {
     // Verify user is in database upon login or add them to it
     useEffect(() => {
         async function verifyUser() {
-            const data = await fetch(`${process.env.REACT_APP_API_URL}/users/verify-user`, {
+            const data = await fetch(`${process.env.REACT_APP_API_URL}/users/verify_user`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${accessToken}`
-                }
+                },
+                body: JSON.stringify({})
             });
             const user = await data.json();
+            console.log("Response status:", data.status)
+            console.log(user)
             if (user.user.auth0Id) {
                 navigate('/');
             }
