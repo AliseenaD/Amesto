@@ -49,7 +49,6 @@ export default function Home() {
         setPhones(uniquePhones.reverse());
     }
 
-    console.log(phones)
     return (
         <>
             <NavBar />

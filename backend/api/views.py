@@ -2,10 +2,8 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import User, Product, ShoppingCartItem, OrderHistory, OrderItem, ProductVariant
 from .serializers import UserSerializer, ProductSerializer, ShoppingCartItemSerializer, OrderHistorySerializer, ProductVariantSerializer
-from .auth0backend import Auth0Authentication, isAdminUser
 from rest_framework.throttling import UserRateThrottle
 from django.db import transaction
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -13,63 +11,61 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 import uuid
 from firebase_admin import storage
 import json
+from .decorators import require_role
+from .permissions import Auth0ResourceProtection
+import logging
 from django.conf import settings
 
+logger = logging.getLogger(__name__)
+
 # User view functionality
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated] # Could potentially remove because the authentication class is already checking access token
-    authentication_classes = [Auth0Authentication]
     throttle_classes = [UserRateThrottle]
-
-    # Alter get permissions so the verify-user route is not requiring auth
-    def get_permissions(self):
-        if self.action == 'verify_user':
-            return [AllowAny()]
-        else:
-            return super().get_permissions()
+    permission_classes = [Auth0ResourceProtection]
 
     # Create or verify a user
     @action(detail=False, methods=['post'])
     def verify_user(self, request):
-        print(f"Request headers: {request.headers}")
-        auth0_id = request.auth.payload.get('sub')
-        email = request.auth.payload.get(f"{settings.AUTH_0_AUDIENCE}/email")
-        role = request.auth.payload.get(f"{settings.AUTH_0_AUDIENCE}/roles", ['user'])
-
-        # Verify data
-        if not auth0_id or not email:
-            return Response({"Error": "Unable to retrieve user information"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Get or create the user
-        user, created = User.objects.get_or_create(
-            auth0_id = auth0_id,
-            defaults= {
-                'username': email,
-                'email': email,
-                'role': role[0] if role else 'user'
-            })
-        serializer = self.get_serializer(user)
-        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
-        print(serializer.data)
-        return Response({"user": serializer.data, "created": created}, status_code)
-
-    # Get the user info
-    def get_queryset(self):
-        return User.objects.filter(id=self.request.user.id)
+        try:
+            if request.auth is None:
+                return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+            auth0_id = request.auth.get('sub')
+            email = request.auth.get(f'{settings.AUTH0_AUDIENCE}/email')
+            role = request.auth.get(f'https://{settings.AUTH0_AUDIENCE}/roles', ['user'])
+            # Verify data
+            if not auth0_id or not email:
+                return Response({"Error": "Unable to retrieve user information"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Get or create the user
+            user, created = User.objects.get_or_create(
+                auth0_id = auth0_id,
+                defaults= {
+                    'username': email,
+                    'email': email,
+                    'role': role[0] if role else 'user'
+                })
+            serializer = self.get_serializer(user)
+            status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+            return Response({"user": serializer.data, "created": created}, status_code)
+        except Exception as e:
+            print(f"Error verifying user: {str(e)}")
+            return Response({"Error": "Error while verifying"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     # Get the user profile
     @action(detail=False, methods=['get'])
     def profile(self, request):
-        user = request.user
+        authId = request.auth.get('sub')
+        user = User.objects.get(auth0_id = authId)
         serializer = self.get_serializer(user)
         return Response(serializer.data)
     
     # Get the user shopping cart
     @action(detail=False, methods=['get'])
     def shopping_cart(self, request):
-        user = request.user
+        authId = request.auth.get('sub')
+        user = User.objects.get(auth0_id = authId)
         cart_items = ShoppingCartItem.objects.filter(user=user)
         serializer = ShoppingCartItemSerializer(cart_items, many=True)
         return Response(serializer.data)
@@ -77,7 +73,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     # Add item to the cart
     @action(detail=False, methods=['post'])
     def add_to_cart(self, request):
-        user = request.user
+        authId = request.auth.get('sub')
+        user = User.objects.get(auth0_id = authId)
         product_id = request.data.get('product_id')
         variant_id = request.data.get('variant_id')
         quantity = request.data.get('quantity')
@@ -105,7 +102,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     # Delete an item from shopping cart
     @action(detail=False, methods=['delete'])
     def delete_from_cart(self, request):
-        user = request.user
+        authId = request.auth.get('sub')
+        user = User.objects.get(auth0_id = authId)
         cart_item_id = request.data.get('cart_item_id')
 
         try:
@@ -117,9 +115,10 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     # Update quantity of item in the shopping cart
-    @action(detail=False, methods=['put'])
+    @action(detail=False, methods=['patch'])
     def update_cart_item(self, request):
-        user = request.user
+        authId = request.auth.get('sub')
+        user = User.objects.get(auth0_id = authId)
         cart_item_id = request.data.get('cart_item_id')
 
         try:
@@ -137,7 +136,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     # View users order history
     @action(detail=False, methods=['get'])
     def order_history(self, request):
-        user = request.user
+        authId = request.auth.get('sub')
+        user = User.objects.get(auth0_id = authId)
         order = OrderHistory.objects.filter(user=user)
         serializer = OrderHistorySerializer(order, many=True)
         return Response(serializer.data)
@@ -146,7 +146,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=False, methods=['post'])
     @transaction.atomic
     def place_order(self, request):
-        user = request.user
+        authId = request.auth.get('sub')
+        user = User.objects.get(auth0_id = authId)
         cart_items = ShoppingCartItem.objects.filter(user=user)
 
         if not cart_items:
@@ -172,18 +173,14 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [Auth0Authentication]
     parser_classes = (MultiPartParser, FormParser)
 
-    # Adjust permission requirements based on different api actions
+    # Set permission requirements for the products
     def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'variants']:
-            permission_classes = [AllowAny]
-        elif self.action in ['create', 'update', 'soft_delete']:
-            permission_classes = [isAdminUser]
+        if self.action in ['create', 'update', 'soft_delete']:
+            return [Auth0ResourceProtection()]
         else:
-            permission_classes = [IsAuthenticated]
-        return [permission() for permission in permission_classes]
+            return super().get_permissions()
     
     # List all of the products
     def list(self, request):
@@ -213,6 +210,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
         
     # Add a new product
+    @require_role('admin')
     def create(self, request):
         # Get all the data necessary
         type = request.data.get('type')
@@ -275,6 +273,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return None
 
     # Update a product's variants
+    @require_role('admin')
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         partial  = kwargs.pop('partial', False)
@@ -324,6 +323,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             variant.delete()
 
     # Soft delete product
+    @require_role('admin')
     @action(detail=True, methods=['post'])
     def soft_delete(self, request):
         instance = self.get_object()
@@ -336,13 +336,12 @@ class ProductViewSet(viewsets.ModelViewSet):
 class OrderHistoryViewSet(viewsets.ModelViewSet):
     queryset = OrderHistory.objects.all()
     serializer_class = OrderHistorySerializer
-    permission_classes = [isAdminUser]
-    authentication_classes = [Auth0Authentication]
     # Set up the pagination
     pagination_class = PageNumberPagination
     page_size = 100
 
     # Function that gets all past orders
+    @require_role('admin')
     def list(self, request):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
@@ -350,6 +349,7 @@ class OrderHistoryViewSet(viewsets.ModelViewSet):
         return self.get_paginated_response(serializer.data)
     
     # Function that allows admin to update the order status of an item
+    @require_role('admin')
     @action(detail=True, methods=['put'])
     def update_order_status(self, request, pk=None):
         new_status = request.data.get('order_status')

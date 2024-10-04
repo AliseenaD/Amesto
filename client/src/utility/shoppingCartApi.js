@@ -1,16 +1,15 @@
 // Add an item to the users shopping cart
 export async function addToCart(product, variant, quantity, accessToken) {
-    console.log('Sending:', product._id, variant._id, quantity)
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/cart`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/update_cart_item`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             },
             body: JSON.stringify({
-                productId: product,
-                variantId: variant,
+                product: product,
+                variant: variant,
                 quantity: quantity
             })
         });
@@ -29,7 +28,7 @@ export async function addToCart(product, variant, quantity, accessToken) {
 // Get all items in a users shopping cart
 export async function getAllCart(accessToken) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/cart`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/shopping_cart`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }

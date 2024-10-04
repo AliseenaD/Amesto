@@ -1,15 +1,14 @@
 // Define interface of variants
 export interface Variants {
-    _id: string;
-    productId: string;
+    id: string;
     color: string;
-    price: number;
+    price: string;
     quantity: number;
 }
 
 // Provide the product structure
 export interface Product {
-    _id: string;
+    id: string;
     type: string;
     brand: string;
     model: string;
@@ -18,10 +17,10 @@ export interface Product {
 }
 
 export interface CartItem {
-    productId: Product;
+    product: Product;
     quantity: number;
-    variantId: Variants;
-    _id: string;
+    variant: Variants;
+    id: string;
 }
 
 // Dictionary type for speakers and phones

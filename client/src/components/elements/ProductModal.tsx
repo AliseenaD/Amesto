@@ -73,7 +73,7 @@ export default function ProductModal({ product, variants, handleClose }) {
                             <p id="product-color">رنگ ها:</p>
                             {
                                 variants.map((variant) => (
-                                    <div key={variant._id} className={`variant-color ${selectedVariant === variant ? ' selected' : ''}`} onClick={() => setSelectedVariant(variant)}>
+                                    <div key={variant.id} className={`variant-color ${selectedVariant === variant ? ' selected' : ''}`} onClick={() => setSelectedVariant(variant)}>
                                         <div className="color-square" style={{backgroundColor: `${variant.color}`}}></div>
                                     </div>
                                 ))

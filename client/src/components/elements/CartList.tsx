@@ -20,7 +20,7 @@ export default function CartList({ products, updateCartItem, deleteCartItem, tot
             <Fade triggerOnce direction="up">
                 <div className="cart-content">
                     {products && products.map((item) => (
-                        <CartProduct key={item._id} product={item} updateCartItem={updateCartItem} deleteCartItem={deleteCartItem} />
+                        <CartProduct key={item.id} product={item} updateCartItem={updateCartItem} deleteCartItem={deleteCartItem} />
                     ))}
                 </div>
                 <div className="total-container">

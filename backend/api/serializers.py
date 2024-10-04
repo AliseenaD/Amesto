@@ -9,7 +9,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
 
 # Product serializer 
 class ProductSerializer(serializers.ModelSerializer):
-    picture = serializers.ImageField(required=False)
+    picture = serializers.URLField(required=False)
     variants = ProductVariantSerializer(many=True, required=False)
 
     class Meta:

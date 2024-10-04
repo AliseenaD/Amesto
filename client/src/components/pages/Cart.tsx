@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../elements/NavBar.tsx";
-import { CartItem } from "../../types/productTypes.ts";
+import { CartItem, Product, Variants } from "../../types/productTypes.ts";
 import { useAuthToken } from "../../AuthTokenContext.js";
 import { addToCart, deleteCartItem, getAllCart } from "../../utility/shoppingCartApi.js";
 import Footer from "../elements/Footer.tsx";
@@ -29,17 +29,17 @@ export default function Cart() {
 
     // Function to set the total cost
     function getCost() {
-        const value = userCart.reduce((sum, item) => sum + item.quantity * item.variantId.price, 0);
+        const value = userCart.reduce((sum, item) => sum + item.quantity * Number(item.variant.price), 0);
         setTotalCost(value);
     }
 
     // Function to update a cart item when incremente on the individual product level
-    async function updateCartItem(productId: string, variantId: string, newQuantity: number) {
+    async function updateCartItem(product: Product, variant: Variants, newQuantity: number) {
         try {
-            const response = await addToCart(productId, variantId, newQuantity, accessToken);
+            const response = await addToCart(product, variant, newQuantity, accessToken);
             // If response successful then update cart locally to match
             if (response.success) {
-                setUserCart(prevCart => prevCart.map(item => item.productId._id === productId && item.variantId._id === variantId ? 
+                setUserCart(prevCart => prevCart.map(item => item.product.id === product.id && item.variant.id === variant.id ? 
                     { ...item, quantity: newQuantity } : item));
                 getCost();
             } 
@@ -49,12 +49,13 @@ export default function Cart() {
         }
     }
 
+    // Function to delete a cart product
     async function deleteCartProduct(productId: string, variantId: string) {
         try {
             const response = await deleteCartItem(productId, variantId, accessToken);
             if (response!.success) {
                 setUserCart(prevCart => prevCart.filter(item => 
-                    item.productId._id !== productId || item.variantId._id !== variantId
+                    item.product.id !== productId || item.variant.id !== variantId
                 ));
             }
         }
@@ -62,7 +63,7 @@ export default function Cart() {
             console.error('Error while deleting item from cart:', error);
         }
     }
-    
+
     return (
         <>
             <NavBar />

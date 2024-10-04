@@ -1,18 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { getVariants } from "../../utility/productsApi.js";
+import React, { useState } from "react";
 import '../styles/elementStyles.css';
 import ProductModal from "./ProductModal.tsx";
-import { Variants } from "../../types/productTypes.ts";
 
 export default function ProductCardPreview({ product, displayStorage }) {
-    const [variantColors, setVariantColors] = useState<string[]>([]); // For the colors
-    const [prodVariants, setProdVariants] = useState<Variants[]>([]); // For the variants to pass to product info
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    // Retrieve the variants every time products loads
-    useEffect(() => {
-        //fetchVariants()
-    }, [product]);
 
     // Alter name to provide name of country outside of title if present
     function handleCountry() {
@@ -35,16 +26,6 @@ export default function ProductCardPreview({ product, displayStorage }) {
         );
     }
 
-    /*
-    // Get all the variants of the product
-    async function fetchVariants() {
-        const variants = await getVariants(product);
-        setProdVariants(variants);
-        const colors = variants.map((variant) => variant.color);
-        setVariantColors(colors)
-    }
-    */
-
     // Handle the closing of the product information card
     function handleCardClose() {
         setIsModalOpen(false);
@@ -63,11 +44,11 @@ export default function ProductCardPreview({ product, displayStorage }) {
                     <p className="preview-product-brand">{product.brand}</p>
                     { handleCountry() }
                     { 
-                        variantColors ? (
+                        product.variants ? (
                             <div className="color-storage">
                                 <div className="color-container">
-                                    { variantColors.map((color) => (
-                                        <div className="color-circle" key={color} style={{backgroundColor: `${color}`}}></div>
+                                    { product.variants.map((prod) => (
+                                        <div className="color-circle" key={prod.id} style={{backgroundColor: `${prod.color}`}}></div>
                                     )) }
                                 </div>
                                 { displayStorage ? <p className="preview-product-country" id="storage-text">{product.storage}GB</p> : '' }
@@ -77,7 +58,7 @@ export default function ProductCardPreview({ product, displayStorage }) {
                 </div>
             </div>
             {isModalOpen && (
-                <ProductModal product={product} variants={prodVariants} handleClose={handleCardClose} />
+                <ProductModal product={product} variants={product.variants} handleClose={handleCardClose} />
             )}
         </>
     );

@@ -27,7 +27,7 @@ export default function CardScroll({ title, products, displayStorage }: CardScro
                     <IoIosArrowBack className="arrow-icons" size={40} onClick={() => handleScroll('left')} />
                     <ul className="cards-list" ref={containerRef}>
                         {products.map((product) => (
-                            <li key={product._id}>
+                            <li key={product.id}>
                                 <ProductCardPreview product={product} displayStorage={displayStorage} />
                             </li>
                         ))}

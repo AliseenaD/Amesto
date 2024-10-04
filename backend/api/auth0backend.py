@@ -1,72 +1,56 @@
-import requests
-from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
-from rest_framework.permissions import IsAuthenticated
-from jose import jwt
-from django.core.cache import cache
+import json
+from urllib.request import urlopen
+import logging
+
+from authlib.oauth2.rfc7523 import JWTBearerTokenValidator
+from authlib.jose.rfc7517.jwk import JsonWebKey
+from authlib.integrations.django_oauth2 import ResourceProtector
 from django.conf import settings
 
-User = get_user_model()
+logger = logging.getLogger(__name__)
 
-class Auth0Authentication(JWTAuthentication):
-    def __init__(self):
-        self.jwks_client = None
-        self.jwks = self.get_jwks()
+# Class meant to validate access tokens provided in API calls
+class Auth0JWTBearerTokenValidator(JWTBearerTokenValidator):
+    def __init__(self, domain, audience):
+        logger.info(f"Initializing Auth0JWTBearerTokenValidator with domain: {domain}, audience: {audience}")
+        issuer = f"https://{domain}/"
+        jsonurl = urlopen(f"{issuer}.well-known/jwks.json")
+        public_key = JsonWebKey.import_key_set(
+            json.loads(jsonurl.read())
+        )
+        super(Auth0JWTBearerTokenValidator, self).__init__(
+            public_key
+        )
+        self.claims_options = {
+            "exp": {"essential": "True"},
+            "aud": {"essential": True, "value": audience},
+            "iss": {"essential": True, "value": issuer}
+        }
 
-    def get_jwks(self):
-        # Fetch and cache the jwks
-        jwks = cache.get('auth0_jwks')
-        if not jwks:
-            jwks_url = f'https://{settings.AUTH0_DOMAIN}/.well-known/jwks.json'
-            jwks = requests.get(jwks_url).json()
-            cache.set('auth0_jwks', jwks, timeout=3600)
-        return jwks
-    
-    def get_public_key(self, token):
-        # Get the public key for verifying the token
+    def authenticate_token(self, token_string):
+        logger.info("Attempting to authenticate token")
         try:
-            kid = jwt.get_unverified_header(token)['kid']
-            for key in self.jwks['keys']:
-                if key['kid'] == kid:
-                    return jwt.algorithms.RSAAlgorithm.from_jwk(key)
-        except Exception:
-            raise InvalidToken('Invalid token header')
-        
-    def authenticate(self, request):
+            claims = super().authenticate_token(token_string)
+            logger.info(f"Token authenticated successfully. Claims: {claims}")
+            return claims
+        except Exception as e:
+            logger.error(f"Token authentication failed: {str(e)}")
+            raise
+
+    # Print out the token for debugging issues
+    def __call__(self, token, scopes=None):
+        print(f"Validating token: {token[:10]}")
         try:
-            header = self.get_header(request)
-            if header is None:
-                return None
-            raw_token = self.get_raw_token(header)
-            if raw_token is None:
-                return None
-            public_key = self.get_public_key(raw_token)
-            # Decode and verify the Auth0 token
-            auth0_payload = jwt.decode(
-                raw_token,
-                public_key,
-                algorithms=['RS256'],
-                audience=settings.AUTH0_AUDIENCE,
-                issuer=f'https://{settings.AUTH0_DOMAIN}/'
-            )
-            auth_0_user_id = auth0_payload['sub']
+            return super().__call__(token, scopes)
+        except Exception as e:
+            print(f"Token failed: {str(e)}")
+            raise
 
-            # Try to get the user
-            try:
-                user = User.objects.get(auth0_id = auth_0_user_id)
-            except User.DoesNotExist:
-                raise AuthenticationFailed("No user found with this ID")
-
-            return user, auth0_payload
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Token has expired')
-        except jwt.JWTClaimsError:
-            raise AuthenticationFailed('Invalid claims')
-        except jwt.JWTError:
-            raise AuthenticationFailed('Invalid token')
-
-# Class for checking user roles
-class isAdminUser(IsAuthenticated):
-    def has_permission(self, request, view):
-        return super().has_permission(request, view) and request.user.role.lower() == 'admin'
+# Initialize the resource protector and give it the validator
+require_auth = ResourceProtector()
+validator = Auth0JWTBearerTokenValidator(
+    settings.AUTH0_DOMAIN, 
+    settings.AUTH0_AUDIENCE
+)
+require_auth.register_token_validator(validator)
+print('Validator registered')
