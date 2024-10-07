@@ -1,8 +1,10 @@
 import React from "react";
 import '../styles/cartStyles.css';
 import { Fade } from "react-awesome-reveal";
+import { useAuthToken } from "../../AuthTokenContext";
 
 export default function CartProduct({ product, updateCartItem, deleteCartItem }) {
+    const { accessToken } = useAuthToken();
 
     // Correct the name of models
     function fixCountry() {
@@ -37,14 +39,13 @@ export default function CartProduct({ product, updateCartItem, deleteCartItem })
             return;
         }
         try {
-            updateCartItem(product.product, product.variant, newQuantity);
+            updateCartItem(product.id, newQuantity, accessToken);
         }
         catch (error) {
-            console.error('Failed to update qyantity:', error)
+            console.error('Failed to update quantity:', error)
         }
     }
 
-    console.log(product)
     return (
         <Fade triggerOnce direction="up">
             <div className="cart-product-content">
@@ -52,7 +53,7 @@ export default function CartProduct({ product, updateCartItem, deleteCartItem })
                 {fixCountry()}
                 <div className="price-section">
                     <p className="cart-label">قیمت</p>
-                    <p className="cart-specifics">{product.variant.price} ریال</p>
+                    <p className="cart-specifics">{Math.trunc(product.variant.price)} ریال</p>
                 </div>
                 <div className="quantity-section">
                     <p className="cart-label">تداد</p>
@@ -66,7 +67,7 @@ export default function CartProduct({ product, updateCartItem, deleteCartItem })
                     <p className="cart-label">مجموع</p>
                     <p className="cart-specifics">{product.variant.price * product.quantity} ریال</p>
                 </div>
-                <button className="delete-item-logo" onClick={() => deleteCartItem(product.product.id, product.variant.id)}>حذف کنید</button>
+                <button className="delete-item-logo" onClick={() => deleteCartItem(product.id)}>حذف کنید</button>
             </div>
         </Fade>
     );

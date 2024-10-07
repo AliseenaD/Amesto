@@ -52,7 +52,7 @@ export default function ProductModal({ product, variants, handleClose }) {
             loginWithRedirect();
         }
         else if (selectedVariant.quantity >= 1) {
-            await addToCart(product._id, selectedVariant._id, 1, accessToken);
+            await addToCart(product.id, selectedVariant.id, 1, accessToken);
             alert('Product added to cart');
         }
     }

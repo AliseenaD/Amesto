@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 # Class meant to validate access tokens provided in API calls
 class Auth0JWTBearerTokenValidator(JWTBearerTokenValidator):
     def __init__(self, domain, audience):
-        logger.info(f"Initializing Auth0JWTBearerTokenValidator with domain: {domain}, audience: {audience}")
         issuer = f"https://{domain}/"
         jsonurl = urlopen(f"{issuer}.well-known/jwks.json")
         public_key = JsonWebKey.import_key_set(
@@ -28,13 +27,10 @@ class Auth0JWTBearerTokenValidator(JWTBearerTokenValidator):
         }
 
     def authenticate_token(self, token_string):
-        logger.info("Attempting to authenticate token")
         try:
             claims = super().authenticate_token(token_string)
-            logger.info(f"Token authenticated successfully. Claims: {claims}")
             return claims
         except Exception as e:
-            logger.error(f"Token authentication failed: {str(e)}")
             raise
 
     # Print out the token for debugging issues

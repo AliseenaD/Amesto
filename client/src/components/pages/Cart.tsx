@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../elements/NavBar.tsx";
 import { CartItem, Product, Variants } from "../../types/productTypes.ts";
 import { useAuthToken } from "../../AuthTokenContext.js";
-import { addToCart, deleteCartItem, getAllCart } from "../../utility/shoppingCartApi.js";
+import { updateCartItem, deleteCartItem, getAllCart } from "../../utility/shoppingCartApi.js";
 import Footer from "../elements/Footer.tsx";
 import CartList from "../elements/CartList.tsx";
 
@@ -34,12 +34,12 @@ export default function Cart() {
     }
 
     // Function to update a cart item when incremente on the individual product level
-    async function updateCartItem(product: Product, variant: Variants, newQuantity: number) {
+    async function updateCart(cartId: number, newQuantity: number) {
         try {
-            const response = await addToCart(product, variant, newQuantity, accessToken);
+            const response = await updateCartItem(cartId, newQuantity, accessToken);
             // If response successful then update cart locally to match
-            if (response.success) {
-                setUserCart(prevCart => prevCart.map(item => item.product.id === product.id && item.variant.id === variant.id ? 
+            if (response!.success) {
+                setUserCart(prevCart => prevCart.map(item => Number(item.id) === cartId ? 
                     { ...item, quantity: newQuantity } : item));
                 getCost();
             } 
@@ -50,12 +50,12 @@ export default function Cart() {
     }
 
     // Function to delete a cart product
-    async function deleteCartProduct(productId: string, variantId: string) {
+    async function deleteCartProduct(cartId: number) {
         try {
-            const response = await deleteCartItem(productId, variantId, accessToken);
+            const response = await deleteCartItem(cartId, accessToken)
             if (response!.success) {
                 setUserCart(prevCart => prevCart.filter(item => 
-                    item.product.id !== productId || item.variant.id !== variantId
+                    Number(item.id) !== cartId
                 ));
             }
         }
@@ -67,7 +67,7 @@ export default function Cart() {
     return (
         <>
             <NavBar />
-            <CartList products={userCart} updateCartItem={updateCartItem} totalCost={totalCost} deleteCartItem={deleteCartProduct} />
+            <CartList products={userCart} updateCartItem={updateCart} totalCost={totalCost} deleteCartItem={deleteCartProduct} />
             <Footer />
         </>
     )

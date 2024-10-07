@@ -1,8 +1,8 @@
 // Add an item to the users shopping cart
 export async function addToCart(product, variant, quantity, accessToken) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/update_cart_item`, {
-            method: 'PATCH',
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/add_to_cart/`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
@@ -44,25 +44,47 @@ export async function getAllCart(accessToken) {
     }
 }
 
-// Delete an item from the cart
-export async function deleteCartItem(productId, variantId, accessToken) {
+// Update an item in the cart
+export async function updateCartItem(cartId, quantity, accessToken) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/cart`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/update_cart_item/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+                cart_item_id: cartId,
+                quantity: quantity
+            })
+        })
+        if (!response.ok) {
+            throw new Error('Network response failed');
+        }
+        return { success: true }
+    }
+    catch (error) {
+        console.error('Error occurred while attempting to update a product within the shopping cart:', error);
+    }
+}
+
+// Delete an item from the cart
+export async function deleteCartItem(cartId, accessToken) {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/users/delete_from_cart/`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             },
             body: JSON.stringify({
-                productId: productId,
-                variantId: variantId
+                cart_item_id: cartId
             })
         });
         if (!response.ok) {
-            throw new Error('Network reponse failed');
+            throw new Error('Network response failed');
         }
-        const data = response.json();
-        return { success: true, data: data };
+        return { success: true };
     }
     catch (error) {
         console.error('Error occurred while attempting to delete item from shopping cart:', error);
