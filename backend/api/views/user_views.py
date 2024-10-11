@@ -152,8 +152,15 @@ class UserViewSet(viewsets.ModelViewSet):
         user = User.objects.get(auth0_id = authId)
         cart_items = ShoppingCartItem.objects.filter(user=user)
 
+        # Check there are cart items
         if not cart_items:
             return Response({'error': 'Shopping cart is empty'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Ensure the requested quantities are all available
+        for cart_item in cart_items:
+            if cart_item.quantity > cart_item.variant.quantity:
+                return Response({'error': f'Not enough in stock for {cart_item.product.brand} {cart_item.product.model} ({cart_item.variant.color}).'
+                                 f'Requested: {cart_item.quantity} Available: {cart_item.variant.quantity}'}, status=status.HTTP_400_BAD_REQUEST)
         
         # Calculate total price and add as order
         total_amount = sum(item.variant.price * item.quantity for item in cart_items)
@@ -166,6 +173,11 @@ class UserViewSet(viewsets.ModelViewSet):
                 variant=cart_item.variant,
                 quantity=cart_item.quantity
             )
+            # Update item quantities
+            cart_item.variant.quantity -= cart_item.quantity
+            cart_item.variant.save()
+        
+        # Delete the items from the users cart    
         cart_items.delete()
 
         serializer = OrderHistorySerializer(order)

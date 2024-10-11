@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import '../styles/adminStyles.css';
+import '../../styles/adminStyles.css';
 import { Fade } from "react-awesome-reveal";
 import AddProduct from "./AddProduct.tsx";
 import AllProducts from "./AllProducts.tsx";
 import DeleteProduct from "./DeleteProduct.tsx";
 import EditProducts from "./EditProducts.tsx";
+import OrderStatus from "./OrderStatus.tsx";
 
 export default function AdminForms() {
     const allOptions = [
         {
-            title: 'Order History'
+            title: 'Order History',
+            component: <OrderStatus />
         },
         {
             title: 'Update Price or Quantity',

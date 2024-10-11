@@ -4,7 +4,7 @@ import { CartListType } from "../../types/productTypes";
 import CartProduct from "./CartProduct.tsx";
 import { Fade } from "react-awesome-reveal";
 
-export default function CartList({ products, updateCartItem, deleteCartItem, totalCost }: CartListType) {
+export default function CartList({ products, updateCartItem, deleteCartItem, orderCart, totalCost }: CartListType) {
 
     if (products.length === 0) {
         return (
@@ -32,7 +32,7 @@ export default function CartList({ products, updateCartItem, deleteCartItem, tot
                         </div>
                         <p id="total-cost-label">{totalCost} ریال</p>
                     </div>
-                    <button className="checkout-button">تسویه حساب</button>
+                    <button className="checkout-button" onClick={orderCart}>تسویه حساب</button>
                 </div>
             </Fade>
         );

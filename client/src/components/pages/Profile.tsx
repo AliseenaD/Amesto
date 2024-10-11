@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../elements/NavBar.tsx";
 import { useAuthToken } from "../../AuthTokenContext.js";
-import AdminForms from "../elements/AdminForms.tsx";
+import AdminForms from "../elements/AdminElements/AdminForms.tsx";
 import { getProfile } from "../../utility/profileApi.js";
 
 export default function Profile() {
@@ -18,6 +18,7 @@ export default function Profile() {
     async function getRole() {
         try {
             const profile = await getProfile(accessToken);
+            console.log(profile);
             setRole(profile.role);
         }
         catch (error) {

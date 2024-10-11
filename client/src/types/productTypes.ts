@@ -56,7 +56,8 @@ export interface CartProduct {
 
 export interface CartListType {
     products: CartItem[];
-    updateCartItem:(cartId: number, newQuantity: number) => Promise<void>;
-    deleteCartItem:(cartId: number) => Promise<void>;
+    updateCartItem: (cartId: number, newQuantity: number) => Promise<void>;
+    deleteCartItem: (cartId: number) => Promise<void>;
+    orderCart: () => Promise<void>;
     totalCost: number;
 }

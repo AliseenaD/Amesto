@@ -22,7 +22,8 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.brand} {self.model}"
-    
+
+    # Soft delete a product
     def soft_delete(self):
         self.is_deleted = True
         self.save()

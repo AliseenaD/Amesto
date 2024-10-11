@@ -7,7 +7,7 @@ from django.db import transaction
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import uuid
-from firebase_admin import storage
+from ..firebase_config import bucket
 import json
 from ..decorators import require_role
 from ..permissions import Auth0ResourceProtection
@@ -39,20 +39,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
-    
-    # MAY NOT NEED THIS
-    # Retrieve the variants of a specific product
-    @action(detail=True, methods=['get'])
-    def variants(self, request, pk=None):
-        try:
-            product = Product.objects.filter(pk=pk, is_deleted=False)
-            variants = ProductVariant.objects.filter(product=product)
-            serializer = ProductVariantSerializer(variants, many=True)
-            return Response(serializer.data)
-        except Product.DoesNotExist:
-            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
         
-    # Add a new product
+    # Add a new product and its associated variants
     @require_role('admin')
     def create(self, request):
         # Get all the data necessary
@@ -63,8 +51,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         variants = request.data.get('variants')
         image_file = request.FILES.get('image')
 
-        # Validate all of the input
-        if not all([type, brand, model, storage_size, variants, image_file]):
+        # Validate all of the input, check storage if type is phone
+        if not all([type, brand, model, variants, image_file]):
+            if type == 'Phone' and not storage_size:
+                return Response({"error": "Input cannot be invalid"}, status=status.HTTP_400_BAD_REQUEST)
             return Response({"error": "Input cannot be invalid"}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
@@ -72,7 +62,6 @@ class ProductViewSet(viewsets.ModelViewSet):
             # Validate image url
             if not image_url:
                 return Response({"Error": "Invalid image input"}, status=status.HTTP_400_BAD_REQUEST)
-            
             # Create a new product
             product_data = {
                 "type": type,
@@ -85,20 +74,21 @@ class ProductViewSet(viewsets.ModelViewSet):
             product_serializer = self.get_serializer(data=product_data)
             product_serializer.is_valid(raise_exception=True)
             product = product_serializer.save()
-
             # Create the variants associated with the product
             try:
                 parsed_variants = json.loads(variants) if isinstance(variants, str) else variants
             except json.JSONDecodeError:
                 return Response({"Error": "Invalid variants input"}, status=status.HTTP_400_BAD_REQUEST)
-            
             # Loop through and create new variant for each variant passed in
             if isinstance(parsed_variants, list) and parsed_variants:
                 for variant_data in parsed_variants:
-                    variant_data['product'] = product.id
-                    variant_serializer = ProductVariantSerializer(data=variant_data)
-                    variant_serializer.is_valid(raise_exception=True)
-                    variant_serializer.save()
+                    try:
+                        variant_serializer = ProductVariantSerializer(data=variant_data)
+                        variant_serializer.is_valid(raise_exception=True)
+                        variant_serializer.save(product = product)
+                    except Exception as e:
+                        print("Exited with this error in variants:", e)
+                        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     
             return Response({"message": "Successfully created a new product"}, status=status.HTTP_201_CREATED)
         
@@ -107,13 +97,16 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     # Function to upload a given image to firebase
     def upload_image_to_firebase(self, image_file):
-        if isinstance(image_file, InMemoryUploadedFile):
-            file_name = f"{uuid.uuid4()}_{image_file.name}"
-            blob = storage.bucket().blob(f"product_images/{file_name}")
-            blob.upload_from_file(image_file.file, content_type=image_file.content_type)
-            blob.make_public()
-            return blob.public_url
-        return None
+        try:
+            if isinstance(image_file, InMemoryUploadedFile):
+                file_name = f"{uuid.uuid4()}_{image_file.name}"
+                blob = bucket.blob(f"product_images/{file_name}")
+                blob.upload_from_file(image_file.file, content_type=image_file.content_type)
+                blob.make_public()
+                return blob.public_url
+            return None
+        except Exception as e:
+            print(f"Error uploading image to firebase: {str(e)}")
 
     # Update a product's variants
     @require_role('admin')
@@ -122,21 +115,32 @@ class ProductViewSet(viewsets.ModelViewSet):
         partial  = kwargs.pop('partial', False)
         instance = self.get_object()
 
+        # Copy the data as the request data is immutable
+        copy_data = request.data.copy()
+
         # Handle image update if image is provided
         if 'image' in request.FILES:
             new_image_url = self.upload_image_to_firebase(request.FILES['image'])
             if new_image_url:
-                request.data['picture'] = new_image_url
-        
-        # Update the product fields
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        product = serializer.save()
+                copy_data['picture'] = new_image_url
 
         # Handle the variants
-        if 'variants' in request.data:
-            variants_data = request.data.pop('variants')
-            self.update_variants(product, variants_data)
+        if 'variants' in copy_data:
+            variants_data = copy_data.pop('variants')
+
+            # If the variants are an instance of a list of string, then json loads the first element
+            if isinstance(variants_data, list):
+                variants_data = variants_data[0]
+            if isinstance(variants_data, str):
+                variants_data = json.loads(variants_data)
+
+            # Update the variants
+            self.update_variants(instance, variants_data)
+        
+        # Update the product fields
+        serializer = self.get_serializer(instance, data=copy_data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.save()
         
         # Fetch the updated instance
         updated_product = self.get_serializer(product).data
@@ -144,10 +148,10 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     # Helper function to update individual variants as well
     def update_variants(self, product, variants_data):
-        existing_variants = {variant.id: variant for variant in product.variants.all()}
+        existing_variants = {str(variant.id): variant for variant in product.variants.all()}
 
         for variant_data in variants_data:
-            variant_id = variant_data.get('id')
+            variant_id = str(variant_data.get('id'))
             # If there is a variant id, then we will update existing variant
             if variant_id:
                 variant = existing_variants.pop(variant_id)
@@ -168,7 +172,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     # Soft delete product
     @require_role('admin')
     @action(detail=True, methods=['post'])
-    def soft_delete(self, request):
+    def soft_delete(self, request, pk=None):
         instance = self.get_object()
         instance.soft_delete()
         return Response({"message:" "Product successfully deleted"}, status=status.HTTP_204_NO_CONTENT)

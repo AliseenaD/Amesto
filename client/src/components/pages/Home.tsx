@@ -16,10 +16,12 @@ export default function Home() {
     const [phones, setPhones] = useState<Product[]>([]);
     const [speakers, setSpeakers] = useState<Product[]>([]);
 
-    // Refresh products
+    // Refresh products, only do so if the products non existent to reduce server load
     useEffect(() => {
-        fetchProducts();
-    }, []);
+        if (products.length == 0) {
+            fetchProducts();
+        }
+    }, [products]);
 
     // Refilter every time products changes
     useEffect(() => {

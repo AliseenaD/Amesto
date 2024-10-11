@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import '../styles/adminStyles.css';
-import { getProducts } from "../../utility/productsApi";
+import '../../styles/adminStyles.css';
+import { getProducts } from "../../../utility/productsApi";
 
 export default function AllProducts() {
     const [products, setProducts] = useState([]);

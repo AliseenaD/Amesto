@@ -11,6 +11,8 @@ import Profile from './components/pages/Profile.tsx';
 import VerifyUser from './components/pages/VerifyUser.tsx';
 import Cart from './components/pages/Cart.tsx';
 import './index.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const rootElement = document.getElementById('root') as HTMLElement;
 const root = ReactDOM.createRoot(rootElement);
@@ -27,6 +29,7 @@ root.render(
       }}
     >
       <AuthTokenProvider>
+        <ToastContainer position='top-center' />
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<Home />} />

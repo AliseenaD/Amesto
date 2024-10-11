@@ -8,6 +8,7 @@ import { Fade } from "react-awesome-reveal";
 import { useAuth0 } from "@auth0/auth0-react";
 import { addToCart } from "../../utility/shoppingCartApi";
 import { useAuthToken } from "../../AuthTokenContext";
+import { toast } from 'react-toastify';
 
 export default function ProductModal({ product, variants, handleClose }) {
     const { loginWithRedirect, isAuthenticated } = useAuth0();
@@ -53,7 +54,7 @@ export default function ProductModal({ product, variants, handleClose }) {
         }
         else if (selectedVariant.quantity >= 1) {
             await addToCart(product.id, selectedVariant.id, 1, accessToken);
-            alert('Product added to cart');
+            toast.success("محصول به سبد خرید اضافه شد");
         }
     }
 

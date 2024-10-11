@@ -4,24 +4,21 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from ..models import OrderHistory
 from ..serializers import OrderHistorySerializer
-
 from ..decorators import require_role
+from ..permissions import Auth0ResourceProtection
 
 # API Calls for order history (ADMIN permissions only)
 class OrderHistoryViewSet(viewsets.ModelViewSet):
     queryset = OrderHistory.objects.all()
     serializer_class = OrderHistorySerializer
-    # Set up the pagination
-    pagination_class = PageNumberPagination
-    page_size = 100
+    permission_classes = [Auth0ResourceProtection]
 
     # Function that gets all past orders
     @require_role('admin')
     def list(self, request):
         queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
     
     # Function that allows admin to update the order status of an item
     @require_role('admin')

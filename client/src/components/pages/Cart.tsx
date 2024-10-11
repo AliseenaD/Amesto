@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../elements/NavBar.tsx";
-import { CartItem, Product, Variants } from "../../types/productTypes.ts";
+import { CartItem } from "../../types/productTypes.ts";
 import { useAuthToken } from "../../AuthTokenContext.js";
 import { updateCartItem, deleteCartItem, getAllCart } from "../../utility/shoppingCartApi.js";
 import Footer from "../elements/Footer.tsx";
 import CartList from "../elements/CartList.tsx";
+import { submitOrder } from "../../utility/profileApi.js";
+import { toast } from "react-toastify";
 
 export default function Cart() {
     const [userCart, setUserCart] = useState<CartItem[]>([]);
@@ -64,10 +66,34 @@ export default function Cart() {
         }
     }
 
+    // Function that orders all of the cart items
+    async function orderCart() {
+        try {
+            const result = await submitOrder(accessToken);
+            if (result && result.success) {
+                toast.success("Successfully submitted all items to cart");
+                setUserCart([]);
+                setTotalCost(0);
+            }
+            else {
+                // Notify user if it was a stock number issue
+                if (result!.error.includes("Not enough in stock")) {
+                    toast.error(result?.error || 'Not enough in stock');
+                }
+                else {
+                    toast.error("Items were not submitted to cart");
+                }
+            }
+        }
+        catch (error) {
+            console.error('Error while deleting item from cart:', error);
+        }
+    }
+
     return (
         <>
             <NavBar />
-            <CartList products={userCart} updateCartItem={updateCart} totalCost={totalCost} deleteCartItem={deleteCartProduct} />
+            <CartList products={userCart} orderCart={orderCart} updateCartItem={updateCart} totalCost={totalCost} deleteCartItem={deleteCartProduct} />
             <Footer />
         </>
     )

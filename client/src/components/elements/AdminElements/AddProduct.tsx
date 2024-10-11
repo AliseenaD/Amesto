@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import '../styles/adminStyles.css';
+import '../../styles/adminStyles.css';
 import { Fade } from "react-awesome-reveal";
-import { useAuthToken } from "../../AuthTokenContext";
+import { useAuthToken } from "../../../AuthTokenContext";
+import { addProduct } from "../../../utility/productsApi";
+import { toast } from 'react-toastify';
 
 export default function AddProduct() {
     const { accessToken } = useAuthToken();
@@ -27,11 +29,11 @@ export default function AddProduct() {
     }
 
     // Handle variant change
-    const handleVariantChange = (index, field, value) => {
+    const handleVariantChange = (index: number, field: string, value: string) => {
         const newVariants = [...variants];
         newVariants[index][field] = value;
         setVariants(newVariants);
-      };
+    };
     
     // Add new variant
     const addVariant = () => {
@@ -39,57 +41,42 @@ export default function AddProduct() {
     };
     
     // Remove variant
-    const removeVariant = (index) => {
+    const removeVariant = (index: number) => {
     const newVariants = variants.filter((_, i) => i !== index);
     setVariants(newVariants);
     };
 
     // Handle the submit
     async function handleSubmit(e) {
-        e.preventDefault();
-        const formDataToSend = new FormData();
+        e.preventDefault()
+        const prodData = {
+            ...formData,
+            variants: variants
+        };
 
-        // Add main product to data
-        Object.keys(formData).forEach((key) => {
-            if (key === 'image') {
-                formDataToSend.append('image', formData.image!);
+        try {
+            const result = await addProduct(prodData, accessToken);
+            if (result!.success) {
+                toast.success("Successfully created product!");
+
+                // reset the form information
+                setFormData({
+                    type: '',
+                    brand: '',
+                    model: '',
+                    storage: '',
+                    image: null,
+                });
+                setVariants([{ color: '', price: '', quantity: '' }])
             }
             else {
-                formDataToSend.append(key, formData[key]);
+                throw new Error(result!.error || 'Failed to add product' );
             }
-        });
-
-        // Append variants
-        formDataToSend.append('variants', JSON.stringify(variants));
-
-        // Send data
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/products`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-                method: 'POST',
-                body: formDataToSend,
-            });
-            if (!response.ok) {
-                throw new Error('Failed to add product');
-            }
-            alert('Added product successfully');
         }
-        catch(error) {
-            console.error('Error adding product', error);
-            alert('An error occurred while adding product');
+        catch (error) {
+            console.error("Error while creating new product:", error);
+            toast.error("An error occurred while creating a new product")
         }
-        setFormData({
-            type: '',
-            brand: '',
-            model: '',
-            storage: '',
-            image: null,
-        });
-        setVariants([{
-            color: '', price: '', quantity: ''
-        }]);
     }
 
     return (
