@@ -10,25 +10,25 @@ import OrderStatus from "./OrderStatus.tsx";
 export default function AdminForms() {
     const allOptions = [
         {
-            title: 'Order History',
-            component: <OrderStatus />
+            title: 'همه محصولات',
+            component: <AllProducts />
         },
         {
-            title: 'Update Price or Quantity',
-            component: <EditProducts />
-        },
-        {
-            title: 'Delete Product',
-            component: <DeleteProduct />
-        },
-        {
-            title: 'Add New Product',
+            title: 'افزودن محصول جدید',
             component: <AddProduct />
         },
         {
-            title: 'All Products',
-            component: <AllProducts />
-        }
+            title: 'تاریخچه سفارش',
+            component: <OrderStatus />
+        },
+        {
+            title: 'به روز رسانی محصول',
+            component: <EditProducts />
+        },
+        {
+            title: 'حذف محصول',
+            component: <DeleteProduct />
+        },
     ];
     const[selection, setSelection] = useState(allOptions[0]);
     const[products, setProducts] = useState([]);

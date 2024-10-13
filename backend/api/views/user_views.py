@@ -164,7 +164,7 @@ class UserViewSet(viewsets.ModelViewSet):
         
         # Calculate total price and add as order
         total_amount = sum(item.variant.price * item.quantity for item in cart_items)
-        order = OrderHistory.objects.create(user=user, total_price=total_amount)
+        order = OrderHistory.objects.create(user=user, total_price=total_amount, order_email=user.email)
 
         for cart_item in cart_items:
             OrderItem.objects.create(

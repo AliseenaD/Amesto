@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { IoClose } from "react-icons/io5";
-import Rial from '../../assets/Rial.png';
 import { TiShoppingCart } from "react-icons/ti";
 import '../styles/elementStyles.css';
 import { Fade } from "react-awesome-reveal";
@@ -70,23 +69,23 @@ export default function ProductModal({ product, variants, handleClose }) {
                         {handleCountry()}
                         {product.type === 'Speaker' ? <br></br> : ''}
                         { product.storage ? <p id="product-storage">{product.storage}GB</p> : '' }
-                        <div className="variant-list">
-                            <p id="product-color">رنگ ها:</p>
-                            {
-                                variants.map((variant) => (
-                                    <div key={variant.id} className={`variant-color ${selectedVariant === variant ? ' selected' : ''}`} onClick={() => setSelectedVariant(variant)}>
-                                        <div className="color-square" style={{backgroundColor: `${variant.color}`}}></div>
-                                    </div>
-                                ))
-                            }
-                        </div>
-                        <div className="price-cart">
-                            <div className="product-price">
-                                <img src={Rial} alt="Rial" height={50}></img>
-                                <p id="product-price">{selectedVariant.price}</p>
+                        <div className="variant-pricing">
+                            <div className="variant-list">
+                                <p id="product-color">رنگ ها:</p>
+                                {
+                                    variants.map((variant) => (
+                                        <div key={variant.id} className={`variant-color ${selectedVariant === variant ? ' selected' : ''}`} onClick={() => setSelectedVariant(variant)}>
+                                            <div className="color-square" style={{backgroundColor: `${variant.color}`}}></div>
+                                        </div>
+                                    ))
+                                }
                             </div>
-                            <button className={`cart-button ${selectedVariant.quantity >= 1 && isAuthenticated ? '' : 'unavailable'}`} onClick={addProduct} ><TiShoppingCart size={30} /></button>
+                            <div className="product-price">
+                                <p id="product-color">قیمت:</p>
+                                <p id="product-price">{Math.floor(selectedVariant.price)}</p>
+                            </div>
                         </div>
+                        <button className={`cart-button ${selectedVariant.quantity >= 1 && isAuthenticated ? '' : 'unavailable'}`} onClick={addProduct} ><TiShoppingCart size={20} /> به سبد خرید اضافه کنید</button>
                     </div>
                 </div>
             </Fade>

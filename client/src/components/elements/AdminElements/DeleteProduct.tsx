@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Fade } from "react-awesome-reveal";
 import { deleteProduct, getProducts } from "../../../utility/productsApi";
 import { useAuthToken } from "../../../AuthTokenContext";
-import { IoSearch } from "react-icons/io5";
-import { ToastContainer, toast } from 'react-toastify';
+import { IoSearch, IoTrashOutline } from "react-icons/io5";
+import { toast } from 'react-toastify';
 import { IoClose } from "react-icons/io5";
 import { Product, ProductDictionary } from "../../../types/productTypes";
 import '../../styles/adminStyles.css';
@@ -90,41 +90,65 @@ export default function DeleteProduct() {
             console.error("Error occurred while deleting a product:", error);
         }
     }
-
-    // Display the products from the dictionary
-    function displayProducts(dictionary: ProductDictionary) {
+    
+    function ProductCard({ product }: { product: Product }) {
+        return (
+            <div className="product-card">
+            <div className="product-info">
+                <h3>{product.brand} {product.model}</h3>
+                <p>{product.storage ? `${product.storage}GB` : ''}</p>
+            </div>
+            <button onClick={() => onDeletePress(product)} className="delete-button">
+                <IoTrashOutline /> Delete
+            </button>
+            </div>
+        );
+      }
+    
+    function ProductList({ dictionary }: { dictionary: ProductDictionary }) {
         return (
             <>
-                {Object.entries(dictionary).map(([type, products]) => (
-                    <div key={type} className="product-type">
-                        <h2 id="delete-headers">{type.charAt(0).toUpperCase() + type.slice(1)}s</h2>
+            {Object.entries(dictionary).map(([type, products]) => (
+                <div key={type} className="product-category">
+                    <h2 className="category-title">{type.charAt(0).toUpperCase() + type.slice(1)}s</h2>
+                    <div className="product-grid">
                         {products.map(product => (
-                            <div className="individual-product" key={product.id}>
-                                <p>{product.brand} {product.model} {product.storage}GB</p>
-                                <div onClick={() => onDeletePress(product)} className="delete-icon">حذف کنید</div>
-                            </div>
+                        <ProductCard key={product.id} product={product} />
                         ))}
                     </div>
-                ))} 
+                </div>
+            ))}
             </>
         );
     }
-
+    
     return (
         <Fade triggerOnce>
-            <div className="delete-products-content">
-                <div className="search-bar">
-                    { isSearched ? <IoClose className="search-icon" size={30} onClick={handleDelete}></IoClose> : <IoSearch className="search-icon" size={30} onClick={searchProducts}></IoSearch> }
-                    <input type="text" id="product-search" placeholder="Search Products" value={searchText} onChange={handleSearch} onKeyDown={handleEnterPress}></input>   
+            <div className="delete-products-container">
+                <div className="search-container">
+                    <div className="search-bar">
+                        <IoSearch className="search-icon" />
+                    <input 
+                        type="text" 
+                        placeholder="Search products..." 
+                        value={searchText} 
+                        onChange={handleSearch} 
+                        onKeyDown={handleEnterPress}
+                    />
+                    {isSearched && <IoClose className="clear-icon" onClick={handleDelete} />}
+                    </div>
+                    {isSearched && <button className="search-button" onClick={searchProducts}>Search</button>}
                 </div>
-                <div className="products-list">
-                    { 
-                        products.length > 0 && !isSearched ? displayProducts(filterTypes(products)) : isSearched && searchedProducts.length > 0 ? (
-                            displayProducts(filterTypes(searchedProducts))
-                        ) : <p>No products</p>
-                    }
+                <div className="products-container">
+                    {products.length > 0 && !isSearched ? (
+                        <ProductList dictionary={filterTypes(products)} />
+                        ) : isSearched && searchedProducts.length > 0 ? (
+                        <ProductList dictionary={filterTypes(searchedProducts)} />
+                        ) : (
+                        <p className="no-products">No products found</p>
+                    )}
                 </div>
             </div>
         </Fade>
     );
-}
+};

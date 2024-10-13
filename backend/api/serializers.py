@@ -40,7 +40,7 @@ class OrderHistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderHistory
-        fields = ['id', 'user', 'order_date', 'order_status', 'total_price', 'items']
+        fields = ['id', 'user', 'order_date', 'order_status', 'total_price', 'order_email', 'items']
 
 # User serializer
 class UserSerializer(serializers.ModelSerializer):
@@ -50,4 +50,4 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'auth0_id', 'role', 'shopping_cart', 'order_history']
-        read_only_fields = ['email', 'auth0_id', 'role']  # These fields should not be editable via API
+        read_only_fields = ['email', 'auth0_id', 'role']  

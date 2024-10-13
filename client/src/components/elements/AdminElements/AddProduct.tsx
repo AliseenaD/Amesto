@@ -4,6 +4,7 @@ import { Fade } from "react-awesome-reveal";
 import { useAuthToken } from "../../../AuthTokenContext";
 import { addProduct } from "../../../utility/productsApi";
 import { toast } from 'react-toastify';
+import { IoAdd, IoColorPalette, IoRemove } from "react-icons/io5";
 
 export default function AddProduct() {
     const { accessToken } = useAuthToken();
@@ -81,65 +82,85 @@ export default function AddProduct() {
 
     return (
         <Fade triggerOnce>
-            <form onSubmit={handleSubmit} className="product-form">
-                <label className="form-label">Product</label>
-                <label htmlFor="option">Product Type</label>
-                <select id="options" name="type" value={formData.type} onChange={handleInputChange} required>
-                    <option value="">--Please choose an option--</option>
-                    <option value='Phone'>Phone</option>
-                    <option value='Speaker'>Speaker</option>
-                </select>
-                <label htmlFor="brand">Product Brand</label>
-                <input type="text" id="brand" name="brand" value={formData.brand} onChange={handleInputChange} placeholder="Ex: Apple" required></input>
-                <label htmlFor="model">Product Model</label>
-                <input type="text" id="model" name="model" value={formData.model} onChange={handleInputChange} placeholder="Ex: iPhone 15 Pro" required></input>
-                {
-                    formData.type === 'Phone' ? (
-                        <>
-                            <label htmlFor="storage">Product Storage (GB)</label>
-                            <input type="number" id="storage" name="storage" value={formData.storage} onChange={handleInputChange} placeholder="Ex: 128"></input>
-                        </>
-                    ) : ''
-                }
-                <label htmlFor="image">Product Image</label>
-                <input type="file" id="image" onChange={handleImageChange} accept="image/*" required></input>
-                <label className="form-label">Variants</label>
-                {
-                    variants.map((variant, index) => (
-                        <div key={index} className="variant-form">
-                            <input
-                                type="text"
-                                placeholder="Color (hex)"
-                                value={variant.color}
-                                onChange={(e) => handleVariantChange(index, 'color', e.target.value)}
-                                pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-                                title="Enter a valid hex color code"
-                            />
-                            <input
-                                type="number"
-                                placeholder="Price"
-                                value={variant.price}
-                                onChange={(e) => handleVariantChange(index, 'price', e.target.value)}
-                                min="0"
-                                step="0.01"
-                                required
-                                title="price"
-                            />
-                            <input
-                                type="number"
-                                placeholder="Quantity"
-                                value={variant.quantity}
-                                onChange={(e) => handleVariantChange(index, 'quantity', e.target.value)}
-                                min="0"
-                                title="quantity"
-                                required
-                            />
-                            <button className="form-buttons" id="remove-variant" type="button" onClick={() => removeVariant(index)}>Remove</button>
+            <div className="add-product-container">
+                <h2 className="form-title">Add New Product</h2>
+                <form onSubmit={handleSubmit} className="product-form">
+                    <div className="form-section">
+                        <h3 className="section-title">Product Details</h3>
+                        <div className="form-group">
+                            <label htmlFor="type">Product Type</label>
+                            <select id="type" name="type" value={formData.type} onChange={handleInputChange} required>
+                                <option value="">--Please choose an option--</option>
+                                <option value='Phone'>Phone</option>
+                                <option value='Speaker'>Speaker</option>
+                            </select>
                         </div>
-                ))}
-                <button className="form-buttons" id="add-variant" type="button" onClick={addVariant}>Add Variant</button>
-                <button type="submit" className="form-buttons" id="submit-button">Add New Product</button>
-            </form>     
+                        <div className="form-group">
+                            <label htmlFor="brand">Product Brand</label>
+                            <input type="text" id="brand" name="brand" value={formData.brand} onChange={handleInputChange} placeholder="Ex: Apple" required />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="model">Product Model</label>
+                            <input type="text" id="model" name="model" value={formData.model} onChange={handleInputChange} placeholder="Ex: iPhone 15 Pro" required />
+                        </div>
+                        {formData.type === 'Phone' && (
+                            <div className="form-group">
+                                <label htmlFor="storage">Product Storage (GB)</label>
+                                <input type="number" id="storage" name="storage" value={formData.storage} onChange={handleInputChange} placeholder="Ex: 128" />
+                            </div>
+                        )}
+                        <div className="form-group">
+                            <label htmlFor="image">Product Image</label>
+                            <input type="file" id="image" onChange={handleImageChange} accept="image/*" required />
+                        </div>
+                    </div>
+                    
+                    <div className="form-section">
+                        <h3 className="section-title">Product Variants</h3>
+                        {variants.map((variant, index) => (
+                            <div key={index} className="variant-form">
+                                <input
+                                    type="text"
+                                    placeholder="Color (hex)"
+                                    value={variant.color}
+                                    onChange={(e) => handleVariantChange(index, 'color', e.target.value)}
+                                    pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                                    title="Enter a valid hex color code"
+                                />
+                                <input
+                                    type="number"
+                                    placeholder="Price"
+                                    value={variant.price}
+                                    onChange={(e) => handleVariantChange(index, 'price', e.target.value)}
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                    title="price"
+                                />
+                                <input
+                                    type="number"
+                                    placeholder="Quantity"
+                                    value={variant.quantity}
+                                    onChange={(e) => handleVariantChange(index, 'quantity', e.target.value)}
+                                    min="0"
+                                    title="quantity"
+                                    required
+                                />
+                                <button className="remove-variant" type="button" onClick={() => removeVariant(index)}>
+                                    <IoRemove /> Remove
+                                </button>
+                            </div>
+                        ))}
+                        <button className="add-variant" type="button" onClick={addVariant}>
+                            <IoAdd /> Add Variant
+                        </button>
+                    </div>
+                    
+                    <button type="submit" className="submit-button">
+                        <IoColorPalette /> Add New Product
+                    </button>
+                </form>     
+            </div>
         </Fade>
     );
 }
