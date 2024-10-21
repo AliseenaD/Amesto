@@ -4,7 +4,7 @@ import { CartItem } from "../../types/productTypes.ts";
 import { useAuthToken } from "../../AuthTokenContext.js";
 import { updateCartItem, deleteCartItem, getAllCart } from "../../utility/shoppingCartApi.js";
 import Footer from "../elements/Footer.tsx";
-import CartList from "../elements/CartList.tsx";
+import CartCard from "../elements/CartElements/CartCard.tsx";
 import { submitOrder } from "../../utility/profileApi.js";
 import { toast } from "react-toastify";
 
@@ -93,7 +93,7 @@ export default function Cart() {
     return (
         <>
             <NavBar />
-            <CartList products={userCart} orderCart={orderCart} updateCartItem={updateCart} totalCost={totalCost} deleteCartItem={deleteCartProduct} />
+            <CartCard products={userCart} orderCart={orderCart} updateCartItem={updateCart} totalCost={totalCost} deleteCartItem={deleteCartProduct} />
             <Footer />
         </>
     )

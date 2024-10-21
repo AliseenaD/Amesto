@@ -14,6 +14,7 @@ export interface Product {
     model: string;
     variants: Variants[]
     storage: number;
+    picture: string;
 }
 
 export interface CartItem {
@@ -55,6 +56,13 @@ export interface CartProduct {
     product: Variants;
 }
 
+// Props for cart product
+export interface CartProductType {
+    product: CartItem;
+    updateCartItem: (cartId: number, newQuantity: number) => Promise<void>;
+    deleteCartItem: (cartId: number) => Promise<void>;
+}
+
 // Props for cart list
 export interface CartListType {
     products: CartItem[];
@@ -70,7 +78,7 @@ export interface Order {
     items: OrderItem[];
     order_date: string;
     order_status: string;
-    total_price: string;
+    total_price: number;
     user: number;
     order_email: string;
 }
@@ -81,4 +89,25 @@ export interface OrderItem {
     product: Product;
     quantity: number;
     variant: Variants;
+}
+
+// Profile type
+export interface User {
+    auth0_id: string;
+    email: string;
+    id: number;
+    order_history: Order[]
+    role: string;
+    shopping_cart: CartItem[];
+    date_joined: string;
+}
+
+// Personal info props
+export interface ProfileProps {
+    profile: User;
+}
+
+// Order props
+export interface OrderProps {
+    orders: Order[];
 }

@@ -11,7 +11,6 @@ import Footer from "../elements/Footer.tsx";
 import { Product } from "../../types/productTypes.ts";
 
 export default function Home() {
-    const { logout } = useAuth0();
     const [products, setProducts] = useState<Product[]>([]);
     const [phones, setPhones] = useState<Product[]>([]);
     const [speakers, setSpeakers] = useState<Product[]>([]);
@@ -59,7 +58,6 @@ export default function Home() {
             <CardScroll title='بلندگوهای پیشرفته ما را بررسی کنید' products={speakers} />
             <HeroBanner text='دستگاه های کاملاً جدید برای شما آورده شده است' image={HeroPic} />
             <Footer />
-            <button onClick={() => logout()}>Logout</button>
         </>
     );
 }

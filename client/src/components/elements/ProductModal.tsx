@@ -8,6 +8,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { addToCart } from "../../utility/shoppingCartApi";
 import { useAuthToken } from "../../AuthTokenContext";
 import { toast } from 'react-toastify';
+import numeral from 'numeral';
 
 export default function ProductModal({ product, variants, handleClose }) {
     const { loginWithRedirect, isAuthenticated } = useAuth0();
@@ -57,6 +58,12 @@ export default function ProductModal({ product, variants, handleClose }) {
         }
     }
 
+    // Formats the cost to be more readable
+    function formatNumber(price: number) {
+        const formattedNumber = numeral(price).format('0,0');
+        return formattedNumber;
+    }
+
     return ReactDOM.createPortal(
         <div className="product-info-container"> 
             <IoClose className="product-exit" size={40} onClick={handleClose} />
@@ -82,7 +89,7 @@ export default function ProductModal({ product, variants, handleClose }) {
                             </div>
                             <div className="product-price">
                                 <p id="product-color">قیمت:</p>
-                                <p id="product-price">{Math.floor(selectedVariant.price)}</p>
+                                <p id="product-price">{formatNumber(selectedVariant.price)}</p>
                             </div>
                         </div>
                         <button className={`cart-button ${selectedVariant.quantity >= 1 && isAuthenticated ? '' : 'unavailable'}`} onClick={addProduct} ><TiShoppingCart size={20} /> به سبد خرید اضافه کنید</button>

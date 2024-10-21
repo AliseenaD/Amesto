@@ -4,6 +4,7 @@ import { Order } from "../../../types/productTypes";
 import { getOrders, updateStatus } from "../../../utility/OrderHistoryApi";
 import { useAuthToken } from "../../../AuthTokenContext";
 import { toast } from 'react-toastify';
+import numeral from 'numeral';
 
 export default function OrderStatus() {
     const { accessToken } = useAuthToken()
@@ -40,10 +41,13 @@ export default function OrderStatus() {
     }
 
     // Function that formats the date correctly
-    function formatDate(dateTime: string) {
-        const date = new Date(dateTime);
-        return date.toISOString().split('T')[0];
-    }
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+    };
 
     // Function that sets the order status upon button click
     async function handleOrderStatusPress(order: Order) {
@@ -71,6 +75,12 @@ export default function OrderStatus() {
         }
     }
 
+    // Formats the cost to be more readable
+    function formatNumber(price: number) {
+        const formattedNumber = numeral(price).format('0,0');
+        return formattedNumber;
+    }
+
     const filterOptions = ['All', 'Processed', 'Pending'];
 
     return (
@@ -93,7 +103,7 @@ export default function OrderStatus() {
                         </span>
                         </div>
                         <div className="order-details">
-                        <p className="order-date">Ordered on: {formatDate(order.order_date)}</p>
+                        <p className="order-date">سفارش داده شد: {formatDate(order.order_date)}</p>
                         <p className="order-email">Email: {order.order_email}</p>
                         </div>
                         <div className="order-items">
@@ -107,8 +117,8 @@ export default function OrderStatus() {
                         ))}
                         </div>
                         <div className="order-footer">
-                            <button onClick={() => handleOrderStatusPress(order)} className="order-status-button">Update Status</button>
-                            <p className="order-total">Total: {order.total_price}</p>
+                            <button onClick={() => handleOrderStatusPress(order)} className="order-status-button">به روز رسانی وضعیت</button>
+                            <p className="order-total">مجموع: {formatNumber(order.total_price)}</p>
                         </div>
                     </div>
                     ))

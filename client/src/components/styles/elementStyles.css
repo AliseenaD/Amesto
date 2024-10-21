@@ -334,7 +334,7 @@ CARD SCROLL SECTION
 
 .scroll-title {
     box-sizing: border-box;
-    padding: 0rem 2rem;
+    padding: 0rem 3rem;
     font-size: 25px;
     color: var(--primary-color);
     font-weight: 450;
@@ -381,11 +381,11 @@ PREVIEW CARD STYLES
     width: 20rem;
     box-shadow: 0 4px 6px 2px rgba(0, 0, 0, 0.25);
     cursor: pointer;
-    transition: scale var(--transition-time);
+    transition: box-shadow var(--transition-time);
 }
 
 .preview-card-content:hover {
-    scale: 1.03;
+    box-shadow: 0 8px 12px 4px rgba(0, 0, 0, 0.35);
 }
 
 .preview-info {

@@ -3,10 +3,14 @@ import NavBar from "../elements/NavBar.tsx";
 import { useAuthToken } from "../../AuthTokenContext.js";
 import AdminForms from "../elements/AdminElements/AdminForms.tsx";
 import { getProfile } from "../../utility/profileApi.js";
+import { User } from "../../types/productTypes.ts";
+import PersonalInfo from "../elements/ProfileElements/PersonalInfo.tsx";
+import OrderStats from "../elements/ProfileElements/OrderStats.tsx";
+import Footer from "../elements/Footer.tsx";
 
 export default function Profile() {
     const { accessToken } = useAuthToken();
-    const [role, setRole] = useState('');
+    const [profile, setProfile] = useState<User>({} as User);
 
     useEffect(() => {
         if (accessToken) {
@@ -18,8 +22,7 @@ export default function Profile() {
     async function getRole() {
         try {
             const profile = await getProfile(accessToken);
-            console.log(profile);
-            setRole(profile.role);
+            setProfile(profile);
         }
         catch (error) {
             console.error('Error fetching role', error);
@@ -29,9 +32,13 @@ export default function Profile() {
     return(
         <>
             <NavBar />
-            {
-                role === 'Admin' ? <AdminForms /> : <p>Basic</p>
-            }
+            { profile.role !== 'Admin' ? (
+                <>
+                    
+                </>
+            ) : (
+                <AdminForms />
+            )}
         </>
     );
 }
