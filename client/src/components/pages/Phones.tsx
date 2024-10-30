@@ -63,7 +63,7 @@ export default function Phones() {
         <>
             <NavBar />
             <BannerImage image={BannerPhoto} title='تلفن ها' />
-            <SearchBar products={phones} />
+            <SearchBar products={phones} displayStorage={true} />
             {presentBrands(filterBrands())}
             <Footer />
         </>

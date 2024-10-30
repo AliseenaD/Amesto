@@ -9,7 +9,7 @@ import { ImProfile } from "react-icons/im";
 
 export default function PersonalInfo({ profile }: ProfileProps) {
     const { logout } = useAuth0();
-
+    console.log('Personal info:', profile);
     // Formats the date passed in
     function formatDate(dateString: string) {
         const date = new Date(dateString);

@@ -1,70 +1,25 @@
-# Getting Started with Create React App
+# Iranian Tech Store E-Commerce Website
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository contains the codebase for a full-featured e-commerce platform developed for an Iranian technology store specializing in phones and speakers. The platform offers a user-friendly shopping experience and an efficient administrative interface for product and order management. Built with **React** for the frontend, **Django** for the backend, **Firebase** for storage, and **Auth0** for secure user authentication, this project is designed to scale with the store's growing online presence. Once live, **Zarinpal** integration will facilitate secure online transactions.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+### User Features
+- **Product Browsing & Purchase**: Users can browse available phones and speakers and add items to their cart for purchase.
+- **Order History**: A dedicated section allows users to view their past orders for easy reference.
+- **Secure Authentication**: Auth0 handles user authentication, ensuring secure access for all registered customers.
+  
+### Admin Features
+- **Product Management**: Admins can upload new products, update existing product details, or remove outdated items from the inventory.
+- **Order Management**: Admins can view the order status for each transaction to streamline fulfillment.
 
-### `npm start`
+### Upcoming Feature
+- **Zarinpal Payment Integration**: Zarinpal, a popular third-party payment processor in Iran, will be integrated to ensure secure and reliable payment processing for all transactions on the platform.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Tech Stack
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **Frontend**: React
+- **Backend**: Django
+- **Authentication**: Auth0
+- **Storage**: Firebase
+- **Payment Gateway**: Zarinpal (to be added)

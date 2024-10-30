@@ -9,10 +9,10 @@ import { CiCalendar } from "react-icons/ci";
 
 export default function OrderStats({ orders }: OrderProps) {
     const [totalCost, setTotalCost] = useState(0);
-
+    console.log('Order stats:', orders);
     // Fetch the total cost of all orders
     useEffect(() => {
-        if (orders.length > 0) {
+        if (orders && orders.length > 0) {
             calculateCosts();
         }
     }, [orders]);
@@ -41,7 +41,7 @@ export default function OrderStats({ orders }: OrderProps) {
     // Returns basic card info for each order within the order history
     function orderCard(order: Order) {
         return (
-            <div className="order-card-content">
+            <div className="order-card-content" key={order.id}>
                 <div className="order-card-info">
                     <p className="order-id">Order #{order.id}</p>
                     <div className="order-date">
@@ -70,6 +70,8 @@ export default function OrderStats({ orders }: OrderProps) {
 
     return (
         <Fade triggerOnce direction="up">
+            {
+                orders ? (
             <div className="order-stats-content">
                 <div className="account-summary">
                     <div className="info-header">
@@ -100,6 +102,8 @@ export default function OrderStats({ orders }: OrderProps) {
                     </div>
                 </div>
             </div>
+                ) : <p>Loading</p>
+            }
         </Fade>
     );
 }

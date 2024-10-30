@@ -8,7 +8,7 @@ import { Fade } from "react-awesome-reveal";
 import CardScroll from "./CardScroll.tsx";
 import ProductCardPreview from "./ProductCardPreview.tsx";
 
-export default function SearchBar({ products }: SearchBarProps) {
+export default function SearchBar({ products, displayStorage }: SearchBarProps) {
     const [isSearched, setIsSearched] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [searchedProducts, setSearchedProducts] = useState<Product[]>([]);
@@ -62,7 +62,7 @@ export default function SearchBar({ products }: SearchBarProps) {
             </div>
             <div className={`search-results ${isSearched ? ' search-open' : ''}`}>
                 { searchedProducts.length > 0 ? searchedProducts.map((product) => (
-                    <ProductCardPreview key={product._id} product={product} displayStorage={true} />
+                    <ProductCardPreview key={product.id} product={product} displayStorage={displayStorage} />
                 )) : <p>No products found</p> }
             </div>
         </>

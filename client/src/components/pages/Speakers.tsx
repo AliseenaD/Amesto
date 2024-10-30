@@ -51,7 +51,7 @@ export default function Speakers() {
         <>
             <NavBar />
             <BannerImage title='بلندگوها' image={SpeakerImg} />
-            <SearchBar products={speakers} />
+            <SearchBar products={speakers} displayStorage={false} />
             {displayBrands(filterBrands())}
             <Footer />
         </>

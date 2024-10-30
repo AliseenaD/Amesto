@@ -130,7 +130,7 @@ export default function DeleteProduct() {
                         <IoSearch className="search-icon" />
                     <input 
                         type="text" 
-                        placeholder="Search products..." 
+                        placeholder="محصولات را جستجو کنید" 
                         value={searchText} 
                         onChange={handleSearch} 
                         onKeyDown={handleEnterPress}

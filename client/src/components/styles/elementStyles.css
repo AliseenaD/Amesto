@@ -204,6 +204,14 @@ PRODUCT INFORMATION STYLES
     transition: background-color var(--transition-time);
 }
 
+.modal-button-text {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
+    margin: -1rem 0;
+}
+
 .cart-button:hover {
     background-color: #348137;
 }

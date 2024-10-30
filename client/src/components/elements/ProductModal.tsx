@@ -92,7 +92,15 @@ export default function ProductModal({ product, variants, handleClose }) {
                                 <p id="product-price">{formatNumber(selectedVariant.price)}</p>
                             </div>
                         </div>
-                        <button className={`cart-button ${selectedVariant.quantity >= 1 && isAuthenticated ? '' : 'unavailable'}`} onClick={addProduct} ><TiShoppingCart size={20} /> به سبد خرید اضافه کنید</button>
+                        <button className={`cart-button ${selectedVariant.quantity >= 1 && isAuthenticated ? '' : 'unavailable'}`} onClick={addProduct}>
+                            {isAuthenticated ? (
+                            <div className="modal-button-text">
+                                <TiShoppingCart size={20} />
+                                <p> به سبد خرید اضافه کنید</p>
+                            </div>
+                           ) 
+                           : 'برای افزودن به سبد خرید وارد شوید'}
+                        </button>
                     </div>
                 </div>
             </Fade>

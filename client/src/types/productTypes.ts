@@ -49,6 +49,7 @@ export interface IndividualProps {
 // Props for search bar
 export interface SearchBarProps {
     products: Product[]
+    displayStorage: boolean;
 }
 
 // Cart product type

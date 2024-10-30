@@ -103,7 +103,7 @@ export default function EditProducts() {
                         <IoSearch className="search-icon" />
                         <input 
                             type="text" 
-                            placeholder="Search products..." 
+                            placeholder="محصولات را جستجو کنید" 
                             value={searchText} 
                             onChange={handleSearch} 
                             onKeyDown={handleEnterPress}

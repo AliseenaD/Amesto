@@ -28,16 +28,20 @@ export default function Profile() {
             console.error('Error fetching role', error);
         }
     }
-
     return(
         <>
             <NavBar />
-            { profile.role !== 'Admin' ? (
+            { profile && (profile.role !== 'Admin') ? (
                 <>
-                    
+                    <PersonalInfo profile={profile} />
+                    <OrderStats orders={profile.order_history} />
+                    <Footer />
                 </>
             ) : (
-                <AdminForms />
+                <>
+                    <AdminForms />
+                    <Footer />
+                </>
             )}
         </>
     );
