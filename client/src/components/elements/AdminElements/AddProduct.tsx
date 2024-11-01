@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import '../../styles/adminStyles.css';
+import "../../styles/adminStyles.css";
 import { Fade } from "react-awesome-reveal";
 import { useAuthToken } from "../../../AuthTokenContext";
 import { addProduct } from "../../../utility/productsApi";
@@ -12,7 +12,7 @@ export default function AddProduct() {
     const [formData, setFormData] = useState({
         type: '',
         brand: '',
-        model: '',
+        model: '', 
         storage: '',
         image: null,
     });
