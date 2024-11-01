@@ -1,12 +1,28 @@
+// Implement cache so repetitive database calls are not made
+const CACHE = {
+    products: null,
+    timestamp: 0,
+    CACHE_DURATION: 1000
+};
+
 // Get all products
 export async function getProducts() {
+    // First check to see if we are within the cache time and just return cached products
+    if (CACHE.products && Date.now() - CACHE.timestamp < CACHE.CACHE_DURATION) {
+        console.log("Returning cache");
+        return CACHE.products;
+    }
+
     try {
+        console.log("fetched");
         const response = await fetch(`${process.env.REACT_APP_API_URL}/products`);
         if (!response.ok) {
             throw new Error ('Netork response failed');
         }
-        const data = await response.json();
-        return data;
+        // Set cache and return it
+        CACHE.products = await response.json();
+        CACHE.timestamp = Date.now()
+        return CACHE.products;
     }
     catch (error) {
         console.error('Error fetching products', error);
@@ -93,5 +109,3 @@ export async function deleteProduct(product, accessToken) {
         return { success: false, error: error.message };
     }
 }
-
-// Function to update the order status of an order

@@ -1,6 +1,14 @@
+import os
+import django
 import json
 import logging
 from decimal import Decimal
+
+# Set up Django environment
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+django.setup()
+
+# Now import Django models after setting up Django
 from django.db import transaction
 from api.models import User, Product, ProductVariant, ShoppingCartItem, OrderHistory, OrderItem
 

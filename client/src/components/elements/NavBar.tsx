@@ -65,7 +65,7 @@ export default function NavBar() {
                         </>
                         : 
                         <li className="right-links">
-                            <button className="login-button" onClick={() => loginWithRedirect()}>LOGIN / REGISTER</button>
+                            <button className="login-button" onClick={() => loginWithRedirect()}>وارد شوید</button>
                         </li>
                     }
                 </ul>

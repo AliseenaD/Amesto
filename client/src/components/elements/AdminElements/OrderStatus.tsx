@@ -5,6 +5,7 @@ import { getOrders, updateStatus } from "../../../utility/OrderHistoryApi";
 import { useAuthToken } from "../../../AuthTokenContext";
 import { toast } from 'react-toastify';
 import numeral from 'numeral';
+import { Fade } from "react-awesome-reveal";
 
 export default function OrderStatus() {
     const { accessToken } = useAuthToken()
@@ -84,7 +85,7 @@ export default function OrderStatus() {
     const filterOptions = ['All', 'Processed', 'Pending'];
 
     return (
-        <>
+        <Fade triggerOnce>
             <div className="order-filtering-options">
                 <ul className="filtering-list">
                     {filterOptions.map(item => (
@@ -126,6 +127,6 @@ export default function OrderStatus() {
                     <p className="no-orders">هیچ سفارشی انجام نشده است</p>
                 )}
             </div>
-        </>
+        </Fade>
     );
 }

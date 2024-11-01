@@ -145,7 +145,7 @@ export default function DeleteProduct() {
                         ) : isSearched && searchedProducts.length > 0 ? (
                         <ProductList dictionary={filterTypes(searchedProducts)} />
                         ) : (
-                        <p className="no-products">No products found</p>
+                        ""
                     )}
                 </div>
             </div>

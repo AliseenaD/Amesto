@@ -28,7 +28,7 @@ export default function CartList({ products, updateCartItem, deleteCartItem, ord
                             <CartProduct key={prod.id} product={prod} updateCartItem={updateCartItem} deleteCartItem={deleteCartItem} />
                             { products.indexOf(prod) === products.length - 1 ? '' : <hr className="product-divider" /> }
                         </>
-                    )) : <p style={{textAlign: 'center'}}>No current items in your cart!</p>}
+                    )) : <p style={{textAlign: 'center', fontSize: '20px'}}>هیچ کالایی در سبد خرید شما وجود ندارد</p>}
                 </div>
                 <div className="checkout-section">
                     <div className="total-section">

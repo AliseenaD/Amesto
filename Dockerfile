@@ -1,13 +1,19 @@
-# Use Python 3.10 instead of 3.9
+# Use Python 3.10
 FROM python:3.10
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV DJANGO_SETTINGS_MODULE=backend.settings
+ENV DJANGO_SETTINGS_MODULE=backend.settings.production
+ENV PORT 8080
 
 # Set work directory
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -24,8 +30,11 @@ RUN pip install gunicorn psycopg2-binary
 # Copy backend project
 COPY backend/ .
 
-# Expose port 8000
-EXPOSE 8000
+# Copy the data dump file
+COPY db_dump.json .
 
-# Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi:application"]
+# Expose port 8080 (Cloud Run expects 8080)
+EXPOSE 8080
+
+# Run gunicorn with timeout settings
+CMD exec gunicorn --bind "0.0.0.0:${PORT}" --timeout 120 backend.wsgi:application
