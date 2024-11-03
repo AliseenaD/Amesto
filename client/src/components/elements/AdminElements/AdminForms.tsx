@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import '../../../styles/adminStyles.css';
+import "../../../components/styles/adminStyles.css";
 import { Fade } from "react-awesome-reveal";
 import AddProduct from "./AddProduct.tsx";
 import AllProducts from "./AllProducts.tsx";

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import '../../styles/elementStyles.css';
+import "../../components/styles/elementStyles.css";
 import { Link } from "react-router-dom";
 import { Fade } from 'react-awesome-reveal';
 import { BiSolidUser } from "react-icons/bi";

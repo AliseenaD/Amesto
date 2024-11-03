@@ -1,5 +1,5 @@
 import React from "react";
-import '../../../styles/cartStyles.css';
+import "../../../components/styles/cartStyles.css";
 import { CartListType } from "../../../types/productTypes.ts";
 import CartProduct from "./CartProduct.tsx";
 import { TiShoppingCart } from "react-icons/ti";

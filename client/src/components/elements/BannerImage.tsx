@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../components/styles/elementStyles.css";
 import { Fade } from "react-awesome-reveal";
-import { Link } from "react-router-dom";
 
 export default function BannerImage({ image, title }) {
     const [windowDim, setWindowDim] = useState(getWindowDimensions());

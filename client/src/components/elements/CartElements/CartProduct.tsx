@@ -1,5 +1,5 @@
 import React from "react";
-import '../../../styles/cartStyles.css';
+import "../../../components/styles/cartStyles.css";
 import { CartProductType } from "../../../types/productTypes";
 import { IoTrashOutline } from "react-icons/io5";
 import { IoIosAdd } from "react-icons/io";

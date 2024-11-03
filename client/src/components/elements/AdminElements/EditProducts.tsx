@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import '../../../styles/adminStyles.css';
+import "../../../components/styles/adminStyles.css";
 import { getProducts } from "../../../utility/productsApi.js";
 import { Product, ProductDictionary } from "../../../types/productTypes.ts";
 import { Fade } from "react-awesome-reveal";

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import '../../styles/elementStyles.css';
+import "../../components/styles/elementStyles.css";
 import { Product } from "../../types/productTypes";
 import { SearchBarProps } from "../../types/productTypes";
 import { IoSearch } from "react-icons/io5";
