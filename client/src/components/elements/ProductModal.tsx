@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { IoClose } from "react-icons/io5";
 import { TiShoppingCart } from "react-icons/ti";
-import '../styles/elementStyles.css';
+import '../../styles/elementStyles.css';
 import { Fade } from "react-awesome-reveal";
 import { useAuth0 } from "@auth0/auth0-react";
 import { addToCart } from "../../utility/shoppingCartApi";

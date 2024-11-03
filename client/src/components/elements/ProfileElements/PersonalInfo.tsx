@@ -1,5 +1,5 @@
 import React from "react";
-import '../../styles/profileStyles.css';
+import '../../../styles/profileStyles.css';
 import { useAuth0 } from "@auth0/auth0-react";
 import { ProfileProps } from "../../../types/productTypes";
 import { IoPersonCircleOutline } from "react-icons/io5";

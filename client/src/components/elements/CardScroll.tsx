@@ -1,5 +1,5 @@
 import React, { useRef, RefObject } from "react";
-import '../styles/elementStyles.css';
+import '../../styles/elementStyles.css';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { Fade } from "react-awesome-reveal";
 import ProductCardPreview from "./ProductCardPreview.tsx";

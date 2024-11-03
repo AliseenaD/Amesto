@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import '../styles/elementStyles.css';
+import "../../components/styles/elementStyles.css";
 import { Fade } from "react-awesome-reveal";
 import { Link } from "react-router-dom";
 

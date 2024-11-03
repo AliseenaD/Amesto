@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import '../../styles/profileStyles.css';
+import '../../../styles/profileStyles.css';
 import { Order, OrderProps } from "../../../types/productTypes";
 import { Fade } from "react-awesome-reveal";
 import numeral from 'numeral';

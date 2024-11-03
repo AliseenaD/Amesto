@@ -7,7 +7,7 @@ import { getProducts } from "../../utility/productsApi.js";
 import { PhoneBrandDictionary } from "../../types/productTypes.ts";
 import CardScroll from "../elements/CardScroll.tsx";
 import SearchBar from "../elements/SearchBar.tsx";
-import '../styles/phonePage.css';
+import "../../components/styles/phonePage.css";
 import { Fade } from "react-awesome-reveal";
 import Footer from "../elements/Footer.tsx";
 
