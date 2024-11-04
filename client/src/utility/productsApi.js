@@ -2,6 +2,9 @@
 export async function getProducts() {
     try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/products`);
+        console.log("Response status:", response.status);
+        console.log("Response type:", response.type);
+        console.log("Response URL:", response.url);
         if (!response.ok) {
             throw new Error ('Netork response failed');
         }
