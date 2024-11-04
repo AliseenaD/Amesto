@@ -17,7 +17,7 @@ ALLOWED_HOSTS = [
     'amesto-backend-646628537801.me-central1.run.app',
     'localhost',
     '127.0.0.1',
-    'https://amesto.vercel.app'
+    'amesto.vercel.app'
 ]
 
 # CORS settings
