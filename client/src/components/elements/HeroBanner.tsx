@@ -1,5 +1,5 @@
 import React from "react";
-import "../../components/styles/elementStyles.css";
+import "../styles/elementStyles.css";
 import { Fade } from "react-awesome-reveal";
 
 export default function HeroBanner({ text, image }) {

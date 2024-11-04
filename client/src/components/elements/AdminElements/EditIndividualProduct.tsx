@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../../components/styles/adminStyles.css";
+import "../../styles/adminStyles.css";
 import { IndividualProps } from "../../../types/productTypes";
 import { useAuthToken } from "../../../AuthTokenContext";
 import { toast } from 'react-toastify';

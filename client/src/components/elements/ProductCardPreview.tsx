@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../../components/styles/elementStyles.css";
+import "../styles/elementStyles.css";
 import ProductModal from "./ProductModal.tsx";
 
 export default function ProductCardPreview({ product, displayStorage }) {
