@@ -6,7 +6,7 @@ import { IoSearch, IoTrashOutline } from "react-icons/io5";
 import { toast } from 'react-toastify';
 import { IoClose } from "react-icons/io5";
 import { Product, ProductDictionary } from "../../../types/productTypes";
-import "../../../components/styles/adminStyles.css";
+import "@styles/adminStyles.css";
 
 export default function DeleteProduct() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -20,10 +20,20 @@ export default function DeleteProduct() {
         fetchProducts();
     }, []);
 
-    // Fetch the products
+    // Fetch all products in the database
     async function fetchProducts() {
-        const prods = await getProducts();
-        setProducts(prods);
+        try {
+            const prods = await getProducts();
+            if (prods) {  // Add null check
+                setProducts(prods);
+            } else {
+                setProducts([]); // Set empty array if no products
+                console.warn('No products returned from API');
+            }
+        }
+        catch (error) {
+            console.error('Error fetching products', error);
+        }
     }
 
     // Filter by types of products (phone or speaker)

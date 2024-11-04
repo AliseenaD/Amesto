@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../../components/styles/adminStyles.css";
+import "@styles/adminStyles.css";
 import { getProducts } from "../../../utility/productsApi";
 import { Product, ProductDictionary } from "../../../types/productTypes";
 import { IoClose, IoColorPalette, IoSearch } from "react-icons/io5";
@@ -22,7 +22,12 @@ export default function AllProducts() {
     async function fetchProducts() {
         try {
             const prods = await getProducts();
-            setProducts(prods);
+            if (prods) {  // Add null check
+                setProducts(prods);
+            } else {
+                setProducts([]); // Set empty array if no products
+                console.warn('No products returned from API');
+            }
         }
         catch (error) {
             console.error('Error fetching products', error);

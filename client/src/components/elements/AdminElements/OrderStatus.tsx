@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../../components/styles/adminStyles.css";
+import "@styles/adminStyles.css";
 import { Order } from "../../../types/productTypes";
 import { getOrders, updateStatus } from "../../../utility/OrderHistoryApi";
 import { useAuthToken } from "../../../AuthTokenContext";

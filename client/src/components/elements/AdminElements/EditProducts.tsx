@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../../components/styles/adminStyles.css";
+import "@styles/adminStyles.css";
 import { getProducts } from "../../../utility/productsApi.js";
 import { Product, ProductDictionary } from "../../../types/productTypes.ts";
 import { Fade } from "react-awesome-reveal";
@@ -21,7 +21,12 @@ export default function EditProducts() {
     async function fetchProducts() {
         try {
             const prods = await getProducts();
-            setProducts(prods);
+            if (prods) {  // Add null check
+                setProducts(prods);
+            } else {
+                setProducts([]); // Set empty array if no products
+                console.warn('No products returned from API');
+            }
         }
         catch (error) {
             console.error('Error retrieving products', error);
