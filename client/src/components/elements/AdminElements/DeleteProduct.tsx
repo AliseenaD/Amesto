@@ -6,7 +6,7 @@ import { IoSearch, IoTrashOutline } from "react-icons/io5";
 import { toast } from 'react-toastify';
 import { IoClose } from "react-icons/io5";
 import { Product, ProductDictionary } from "../../../types/productTypes";
-import "../../components/styles/adminStyles.css";
+import "../../../components/styles/adminStyles.css";
 
 export default function DeleteProduct() {
     const [products, setProducts] = useState<Product[]>([]);
