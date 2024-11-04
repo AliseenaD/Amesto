@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../styles/adminStyles.css";
+import "../../components/styles/adminStyles.css";
 import { getProducts } from "../../../utility/productsApi";
 import { Product, ProductDictionary } from "../../../types/productTypes";
 import { IoClose, IoColorPalette, IoSearch } from "react-icons/io5";
