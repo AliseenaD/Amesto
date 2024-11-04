@@ -17,7 +17,7 @@ export default function Home() {
 
     // Refresh products, only do so if the products non existent to reduce server load
     useEffect(() => {
-        if (products.length == 0) {
+        if (products && products.length == 0) {
             fetchProducts();
         }
     }, [products]);
