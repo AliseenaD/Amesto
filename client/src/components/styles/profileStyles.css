@@ -6,15 +6,17 @@
     background-color: var(--card-background-color);
     border-radius: 10px;
     box-shadow: 0 4px 6px 2px rgba(0, 0, 0, 0.125);
+    text-align: right;
 }
 
 .info-header {
     position: relative;
     box-sizing: border-box;
-    padding-left: 2rem;
+    padding-right: 2rem;
     font-size: 25px;
     font-weight: 600;
     display: flex;
+    justify-content: flex-end;
     align-items: center;
     gap: 2rem;
     background-color: #3b82f6;
@@ -31,6 +33,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    justify-content: flex-end;
 }
 
 #email-header {
@@ -55,6 +58,7 @@
     display: flex;
     gap: 1.5rem;
     align-items: center;
+    justify-content: flex-end;
 }
 
 #email-specific-header {
@@ -76,6 +80,7 @@
     font-weight: 400;
     font-size: 18px;
     transition: background-color var(--transition-time);
+    margin-left: auto;
 }
 
 .logout-button:hover {
@@ -102,6 +107,7 @@
 .account-summary {
     width: 80%;
     height: 400px;
+    text-align: right;
 }
 
 .order-summary {
@@ -140,6 +146,7 @@
     padding: 0.1rem 1rem;
     border-radius: 10px;
     color: #3b82f6;
+    direction: rtl;
 }
 
 #total-sum {
@@ -165,7 +172,9 @@
 }
 
 .products-list {
-    list-style: decimal;
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
 }
 
 .order-card-status {
@@ -182,6 +191,7 @@
     align-items: center;
     gap: 0.5rem;
     font-weight: 650;
+    font-size: 20px;
     color: #3b82f6;
 }
 
@@ -224,6 +234,37 @@
 .products-list-container {
     color: var(--primary-color);
     margin-top: -1rem;
+}
+
+.product-list-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.product-list-item:last-child {
+    border-bottom: none;
+}
+
+.product-details {
+    text-align: right;
+}
+
+.product-name {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.product-quantity {
+    background-color: #f0f9ff;
+    color: #3b82f6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 0.9em;
 }
 
 @media screen and (max-width: 767px) {

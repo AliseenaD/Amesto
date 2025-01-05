@@ -1,131 +1,194 @@
 import React, { useEffect, useState } from "react";
 import "./adminStyles.css";
-import { getProducts } from "../../../utility/productsApi.js";
-import { Product, ProductDictionary } from "../../../types/productTypes.ts";
+import { PaginatedResponse, Product, ProductGridProps } from "../../../types/productTypes.ts";
 import { Fade } from "react-awesome-reveal";
 import EditIndividualProduct from "./EditIndividualProduct.tsx";
-import { IoClose, IoSearch } from "react-icons/io5";
+import { getAccessories, getHeadphones, getPhones, getSpeakers, getWatches } from "../../../utility/productsApi";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+
 
 export default function EditProducts() {
     const [products, setProducts] = useState<Product[]>([]);
-    const [isSearched, setIsSearched] = useState(false);
-    const [searchText, setSearchText] = useState("");
-    const [searchedProducts, setSearchedProducts] = useState<Product[]>([]);
+    const [hasNext, setHasNext] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [hasPrevious, setHasPrevious] = useState<boolean>(false);
+    const [page, setPage] = useState<number>(1);
+    const productTypes = ['Phones', 'Speakers', 'Watches', 'Headphones', 'Accessories'];
+    const [productType, setProductType] = useState<string>(productTypes[0]);
 
-    // Fetch all of the products on page load
+    // Load products
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [page, productType]);
 
-    // Fetch all the products
+    // Fetch the products depening on the product type selected
     async function fetchProducts() {
+        let result: PaginatedResponse<Product> | undefined; 
+        switch (productType) {
+            case 'Phones':
+                result = await fetchPhones();
+                break;
+            case 'Speakers':
+                result = await fetchSpeakers();
+                break;
+            case 'Watches':
+                result = await fetchWatches();
+                break;
+            case 'Headphones':
+                result = await fetchHeadphones();
+                break;
+            case 'Accessories':
+                result = await fetchAccessories();
+                break;
+        }
+
+        // Set paginated states and products
+        if (result) {
+            setHasNext(!!result.next);
+            setHasPrevious(!!result.previous);
+            setProducts(result.results);
+        }
+    }
+
+    // Load all phone products
+    async function fetchPhones() {
+        setIsLoading(true);
         try {
-            const prods = await getProducts();
-            if (prods) {  // Add null check
-                setProducts(prods);
-            } else {
-                setProducts([]); // Set empty array if no products
-                console.warn('No products returned from API');
-            }
+            const result = await getPhones(page, '');
+            return result;
         }
         catch (error) {
-            console.error('Error retrieving products', error);
+            console.error("An error occurred while fetching phones:", error);
+        }
+        finally {
+            setIsLoading(false);
         }
     }
 
-    // Filter by types of products (phone or speaker)
-    function filterTypes(prods: Product[]): ProductDictionary {
-        let dictionary: ProductDictionary = {};
-        prods.forEach(prod => {
-            if (!dictionary[prod.type]) {
-                dictionary[prod.type] = [prod];
-            }
-            else {
-                dictionary[prod.type].push(prod);
-            }
-        });
-        return dictionary;
-    }
-
-    // Function to handle the delete functionality of the search bar
-    function handleDelete() {
-        setIsSearched(false);
-        setSearchText('');
-        setTimeout(() => {
-            setSearchedProducts([]);
-        }, 400);
-    }
-
-    // Function to search through and filter products for what has been searched for
-    function searchProducts() {
-        setIsSearched(true);
-        const searchedProds = products.filter(
-            (product) => product.brand.toLowerCase().includes(searchText.toLowerCase()) || 
-            product.model.toLowerCase().includes(searchText.toLowerCase()) ||
-            product.type.toLowerCase().includes(searchText.toLowerCase())
-        );
-        setSearchedProducts(searchedProds);
-    }
-
-    // Function to update the search text
-    function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
-        setSearchText(e.target.value);
-        // If all chars cleared then clear search
-        if (e.target.value === '') {
-            handleDelete();
+    // Load all speaker products
+    async function fetchSpeakers() {
+        setIsLoading(true);
+        try {
+            const result = await getSpeakers(page, '');
+            return result;
+        }
+        catch (error) {
+            console.error("An error occurred while fetching phones:", error);
+        }
+        finally {
+            setIsLoading(false);
         }
     }
 
-    // Function to handle enter press for searching
-    function handleEnterPress(e: React.KeyboardEvent<HTMLInputElement>) {
-        if (e.key == 'Enter') {
-            searchProducts();
+    // Load all headphone products
+    async function fetchHeadphones() {
+        setIsLoading(true);
+        try {
+            const result = await getHeadphones(page, '');
+            return result;
+        }
+        catch (error) {
+            console.error("An error occurred while fetching headphones:", error);
+        }
+        finally {
+            setIsLoading(false);
         }
     }
 
-    function ProductGrid({ dictionary }: { dictionary: ProductDictionary }) {
+    // Load all watch products
+    async function fetchWatches() {
+        setIsLoading(true);
+        try {
+            const result = await getWatches(page, '');
+            return result;
+        }
+        catch (error) {
+            console.error("An error occurred while fetching headphones:", error);
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }
+
+    // Load all accessories
+    async function fetchAccessories() {
+        setIsLoading(true);
+        try {
+            const result = await getAccessories(page, '');
+            return result;
+        }
+        catch (error) {
+            console.error("An error occurred while fetching headphones:", error);
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }
+
+    function ProductGrid({ title, products }: ProductGridProps) {
         return (
             <>
-                {Object.entries(dictionary).map(([type, products]) => (
-                    <div key={type} className="product-category">
-                        <h2 className="category-title">{type.charAt(0).toUpperCase() + type.slice(1)}s</h2>
+                <div className="product-category">
+                    <h2 className="category-title">{title}</h2>
+                    {products && products.length > 0 ? (
                         <div className="product-grid">
                             {products.map(product => (
-                                <EditIndividualProduct key={product.id} product={product} />
+                                <EditIndividualProduct fetchProducts={fetchProducts} key={product.id} product={product} />
                             ))}
                         </div>
-                    </div>
-                ))}
+                    ): <p>هیچ محصولی با این وجود ندارد</p>}
+                </div>  
             </>
         );
     }
 
+    // Convert number to farsi
+    const toPersianNumbers = (value: number) => {
+        const persianNumbers = {
+            '0': '۰',
+            '1': '۱',
+            '2': '۲',
+            '3': '۳',
+            '4': '۴',
+            '5': '۵',
+            '6': '۶',
+            '7': '۷',
+            '8': '۸',
+            '9': '۹',
+            '.': '.'
+        };
+
+        return value.toString().replace(/[0-9.]/g, c => persianNumbers[c] || c);
+    }
+
+    // Handles the pagination when the page button is clicked
+    function handlePageButtonPress(increment: number) {
+        setPage(currPage => currPage + increment);
+    }
+
+    // Switches the product types upon button press
+    function handleButtonPress(type: string) {
+        setProductType(type);
+        setPage(1);
+    }
+
     return (
         <Fade triggerOnce>
+            <div className="filter-products-container">
+                {productTypes.map(item => (
+                    <button key={item} className={`product-type-button ${productType === item ? 'type-active' : ''}`} onClick={() => handleButtonPress(item)}>{item}</button>
+                ))}
+            </div>
             <div className="edit-products-container">
-                <div className="search-container">
-                    <div className="search-bar">
-                        <IoSearch className="search-icon" />
-                        <input 
-                            type="text" 
-                            placeholder="محصولات را جستجو کنید" 
-                            value={searchText} 
-                            onChange={handleSearch} 
-                            onKeyDown={handleEnterPress}
-                        />
-                        {isSearched && <IoClose className="clear-icon" onClick={handleDelete} />}
-                    </div>
-                    {isSearched && <button className="search-button" onClick={searchProducts}>Search</button>}
-                </div>
                 <div className="products-container">
-                    {products.length > 0 && !isSearched ? (
-                        <ProductGrid dictionary={filterTypes(products)} />
-                    ) : isSearched && searchedProducts.length > 0 ? (
-                        <ProductGrid dictionary={filterTypes(searchedProducts)} />
-                    ) : (
-                        ""
-                    )}
+                    <ProductGrid title={productType} products={products} />
                 </div>
+            </div>
+            <div className="pagination-buttons-container">
+                <button className="pagination-arrow" disabled={isLoading || !hasPrevious} onClick={() => handlePageButtonPress(-1)}><MdOutlineKeyboardArrowLeft size={20} /></button>
+                <div className="pagination-indicator">{toPersianNumbers(page)}</div>
+                <button className="pagination-arrow" disabled={isLoading || !hasNext} onClick={() => handlePageButtonPress(1)}><MdOutlineKeyboardArrowRight size={20} /></button>
             </div>
         </Fade>
     );

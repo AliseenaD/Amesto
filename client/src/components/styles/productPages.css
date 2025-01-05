@@ -1,0 +1,302 @@
+/*
+PRODUCT CARD STYLES
+*/
+.product-card-container {
+    border: 1px solid #e0e0e0;
+    background-color: var(--card-background-color);
+    transition: box-shadow 0.3s ease;
+    cursor: pointer;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 2rem 0;
+}
+
+.product-card-container:hover {
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
+}
+
+.product-card-container img {
+    width: 250px;
+    height: 150px;  
+    object-fit: contain;
+    margin-top: 1.5rem;
+}
+
+.product-card-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem 1rem;
+}
+
+.product-card-brand {
+    color: var(--secondary-color);
+    position: relative;
+    font-size: 18px;
+    font-weight: 450;
+}
+
+.product-new-box {
+    border: 1px solid green;
+    color: green;
+    box-sizing: border-box;
+    padding: 0.1rem 0.3rem;
+}
+
+.product-card-title-country {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem 1rem;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -3rem;
+}
+
+.product-card-color-storage {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -2.3rem;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem 1rem;
+}
+
+.product-card-color-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem 1rem;
+    margin-top: -3rem;
+}
+
+.product-card-color-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.product-card-model {
+    font-size: 18px;
+    color: var(--primary-color);
+    font-weight: 450;
+}
+
+.product-card-country {
+    color: var(--secondary-color);
+    font-weight: 300;
+}
+
+.product-card-price {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: -2rem;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    padding: 0.5rem 1rem;
+    width: 100%;
+}
+
+.product-card-display-price {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    padding: 0.5rem 1rem;
+    width: 100%;
+}
+
+.price-value {
+    font-size: 16px;
+    color: #1c70f6;
+    font-weight: 450;
+    
+}
+
+.price-unit {
+    color: var(--secondary-color);
+    font-weight: 300;
+}
+
+/* 
+PHONE PAGE STYLES
+*/
+.products-paginated-container {
+    position: relative;
+    margin: 2rem auto;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    gap: 0.5rem;
+}
+
+.products-page-buttons {
+    display: flex;
+    position: relative;
+    margin: 1rem auto;
+    width: 30%;
+    justify-content: center;
+    gap: 2rem;
+    align-items: center;
+}
+
+.page-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0.6rem;
+    cursor: pointer;
+}
+
+.filter-section {
+    border-radius: 10px;
+    position: relative;
+    background-color: var(--card-background-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin: 1rem auto;
+    max-width: 1200px;
+    width: 90%;
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+}
+
+.filter-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.filter-headers {
+    display: flex;
+    gap: 1rem;
+}
+
+.active-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-tag {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(113, 178, 248, 0.1);
+    color: #1c70f6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.filter-tag .remove-icon {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.filter-tag .remove-icon:hover {
+    transform: scale(1.1);
+}
+
+.filter-groups {
+    box-sizing: border-box;
+    padding: 0.5rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.filter-group-title {
+    color: var(--secondary-color);
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-button {
+    background-color: transparent;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+}
+
+.filter-button:hover {
+    background-color: rgba(113, 178, 248, 0.1);
+    border-color: rgb(177, 215, 255);
+    color: rgb(177, 215, 255);
+}
+
+.filter-button.active {
+    background-color: #1c70f6;
+    border-color: #1c70f6;
+    color: white;
+}
+
+.filter-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media screen and (max-width: 768px) {
+    .filter-section {
+        width: 95%;
+        padding: 0.75rem;
+    }
+
+    .filter-header {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .filter-groups {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}

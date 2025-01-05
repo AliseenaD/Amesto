@@ -15,6 +15,8 @@ export interface Product {
     variants: Variants[]
     storage: number;
     picture: string;
+    created_at: string;
+    max_price: number;
 }
 
 export interface CartItem {
@@ -24,26 +26,85 @@ export interface CartItem {
     id: string;
 }
 
-// Dictionary type for speakers and phones
-export type ProductDictionary = {
-    [name: string]: Product[];
+// Allow modal to know the cart context
+export type CartContextType = {
+    cartCount: number;
+    incrementCart: () => void;
+    decrementCart: () => void;
+    updateCartCount: (count: number) => void;
+    refreshCartCount: () => Promise<void>;
+};
+
+// News item structure
+export interface NewsItem {
+    id: number;
+    text: string;
+    picture: string;
+    date_created: string;
 }
 
-// Dictionary type for speakers and phones
-export type PhoneBrandDictionary = {
-    [brand: string]: ProductDictionary
+// Brand types
+export interface BrandType {
+    id: number;
+    name: string;
+    product_type: string;
+}
+
+// Paginated response interface
+export interface PaginatedResponse<T> {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
+}
+
+// News card props
+export interface NewsCardProps {
+    newsItem: NewsItem;
+}
+
+// Props for news card scroll - updated to use paginated response
+export interface NewsScrollProps {
+    title: string;
+    news: PaginatedResponse<NewsItem>;
+    navigateFunction: () => void;
+    navigateTitle: string;
+}
+
+// Props for product grid in admin page
+export interface ProductGridProps {
+    title: string;
+    products: Product[];
 }
 
 // Props for card scroll
 export interface CardScrollProps {
     title: string;
-    products: Array<Product>;
+    products: PaginatedResponse<Product>;
     displayStorage?: boolean;
+    displayNew?: boolean;
+    navigateFunction: () => void;
+    navigateTitle: string;
+}
+
+// Props for product card
+export interface ProductCardProps {
+    product: Product;
+    displayStorage?: boolean;
+    displayColor?: boolean;
+}
+
+// Props for preview cards for products
+export interface CardPreviewProps {
+    product: Product;
+    displayStorage?: boolean;
+    displayNew?: boolean;
 }
 
 // Props for individual edit product
 export interface IndividualProps {
     product: Product;
+    fetchProducts: () => Promise<void>;
 }
 
 // Props for search bar

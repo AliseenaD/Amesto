@@ -7,18 +7,54 @@ from ..serializers import OrderHistorySerializer
 from ..decorators import require_role
 from ..permissions import Auth0ResourceProtection
 
+# Pagination class for the orders
+class CustomOrdersPagination(PageNumberPagination):
+    page_size = 12
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 # API Calls for order history (ADMIN permissions only)
 class OrderHistoryViewSet(viewsets.ModelViewSet):
     queryset = OrderHistory.objects.all()
     serializer_class = OrderHistorySerializer
     permission_classes = [Auth0ResourceProtection]
+    pagination_class = CustomOrdersPagination
 
     # Function that gets all past orders
     @require_role('admin')
-    def list(self, request):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset().order_by('-order_date')
+
+        # Paginate the results
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+    
+    # Filter all the past orders by pending
+    @require_role('admin')
+    @action(detail=False, methods=['get'])
+    def pending(self, request):
+        queryset = self.get_queryset().filter(
+            order_status='Pending'
+        ).order_by('-order_date')
+
+        # Paginate the results
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+    
+     # Filter all the past orders by processed
+    @require_role('admin')
+    @action(detail=False, methods=['get'])
+    def processed(self, request):
+        queryset = self.get_queryset().filter(
+            order_status='Processed'
+        ).order_by('-order_date')
+
+        # Paginate the results
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
     
     # Function that allows admin to update the order status of an item
     @require_role('admin')

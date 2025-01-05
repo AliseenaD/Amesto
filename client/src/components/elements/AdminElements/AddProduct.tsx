@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "./adminStyles.css";
 import { Fade } from "react-awesome-reveal";
 import { useAuthToken } from "../../../AuthTokenContext";
@@ -8,6 +8,7 @@ import { IoAdd, IoColorPalette, IoRemove } from "react-icons/io5";
 
 export default function AddProduct() {
     const { accessToken } = useAuthToken();
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [formData, setFormData] = useState({
         type: '',
@@ -19,7 +20,7 @@ export default function AddProduct() {
     const [variants, setVariants] = useState([{ color: '', price: '', quantity: '' }]);
 
     // Handle input change
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -48,7 +49,7 @@ export default function AddProduct() {
     };
 
     // Handle the submit
-    async function handleSubmit(e) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         const prodData = {
             ...formData,
@@ -69,6 +70,10 @@ export default function AddProduct() {
                     image: null,
                 });
                 setVariants([{ color: '', price: '', quantity: '' }])
+                // Reset file input
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
             }
             else {
                 throw new Error(result!.error || 'Failed to add product' );
@@ -93,6 +98,9 @@ export default function AddProduct() {
                                 <option value="">--Please choose an option--</option>
                                 <option value='Phone'>Phone</option>
                                 <option value='Speaker'>Speaker</option>
+                                <option value='Watch'>Watch</option>
+                                <option value='Headphone'>Headphone</option>
+                                <option value='Accessory'>Accessory</option>
                             </select>
                         </div>
                         <div className="form-group">
@@ -103,7 +111,7 @@ export default function AddProduct() {
                             <label htmlFor="model">Product Model</label>
                             <input type="text" id="model" name="model" value={formData.model} onChange={handleInputChange} placeholder="Ex: iPhone 15 Pro" required />
                         </div>
-                        {formData.type === 'Phone' && (
+                        {(formData.type === 'Phone') && (
                             <div className="form-group">
                                 <label htmlFor="storage">Product Storage (GB)</label>
                                 <input type="number" id="storage" name="storage" value={formData.storage} onChange={handleInputChange} placeholder="Ex: 128" />
@@ -111,7 +119,7 @@ export default function AddProduct() {
                         )}
                         <div className="form-group">
                             <label htmlFor="image">Product Image</label>
-                            <input type="file" id="image" onChange={handleImageChange} accept="image/*" required />
+                            <input ref={fileInputRef} type="file" id="image" onChange={handleImageChange} accept="image/*" required />
                         </div>
                     </div>
                     
@@ -121,10 +129,10 @@ export default function AddProduct() {
                             <div key={index} className="variant-form">
                                 <input
                                     type="text"
-                                    placeholder="Color (hex)"
+                                    placeholder="Color"
                                     value={variant.color}
                                     onChange={(e) => handleVariantChange(index, 'color', e.target.value)}
-                                    pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                                    //pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
                                     title="Enter a valid hex color code"
                                 />
                                 <input

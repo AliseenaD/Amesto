@@ -21,7 +21,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.brand} {self.model}"
+        return f"{self.type} {self.model}"
 
     # Soft delete a product
     def soft_delete(self):
@@ -68,3 +68,35 @@ class ShoppingCartItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product} in {self.user.email}'s cart"
+
+# News item
+class NewsItem(models.Model):
+    text = models.CharField(max_length = 300)
+    picture = models.URLField()
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Make sure to order the news items by date created
+        ordering = ['-date_created']
+        indexes = [models.Index(fields=['-date_created'], name='news_date_id')]
+
+    def __str__(self):
+        return f"{self.text[:50]}... - {self.date_created}"
+    
+# Brands and their associated product types
+class Brand(models.Model):
+    name = models.CharField(max_length=100)
+    PRODUCT_TYPE_CHOICES = [
+        ('Phone', 'Phone'),
+        ('Speaker', 'Speaker'),
+        ('Headphone', 'Headphone'),
+        ('Watch', 'Watch'),
+        ('Accessory', 'Accessory')
+    ]
+    product_type = models.CharField(max_length=100, choices=PRODUCT_TYPE_CHOICES)
+
+    class Meta:
+        unique_together = ['id', 'name', 'product_type']
+    
+    def __str__(self):
+        return f"{self.name} ({self.product_type})"

@@ -1,7 +1,7 @@
 // Function to fetch all orders made
-export async function getOrders(accessToken) {
+export async function getOrders(accessToken, page) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/orders`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/orders/?page=${page}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
@@ -14,6 +14,44 @@ export async function getOrders(accessToken) {
     }
     catch (error) {
         console.error('Error fetching order history', error);
+    }
+}
+
+// Function to get all processed orders
+export async function getProcessedOrders(accessToken, page) {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/orders/processed?page=${page}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error ("Network response failed");
+        }
+        const data = await response.json();
+        return data;
+    }
+    catch (error) {
+        console.error('Error fetching processed orders:', error);
+    }
+}
+
+// Function to get all pending orders
+export async function getPendingOrders(accessToken, page) {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/orders/pending?page=${page}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error ("Network response failed");
+        }
+        const data = await response.json();
+        return data;
+    }
+    catch (error) {
+        console.error('Error fetching processed orders:', error);
     }
 }
 

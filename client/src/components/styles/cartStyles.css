@@ -40,6 +40,7 @@
 .total-section {
     display: flex;
     gap: 1rem;
+    direction: rtl;
 }
 
 .total-cost {

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Product, ProductVariant, OrderHistory, OrderItem, ShoppingCartItem
+from .models import User, Product, ProductVariant, OrderHistory, OrderItem, ShoppingCartItem, NewsItem, Brand
 
 # Product variant serializer
 class ProductVariantSerializer(serializers.ModelSerializer):
@@ -11,10 +11,18 @@ class ProductVariantSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     picture = serializers.URLField(required=False)
     variants = ProductVariantSerializer(many=True, required=False)
+    # Include a max price
+    max_price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        read_only=True,
+        required=False
+    )
 
     class Meta:
         model = Product
-        fields = ['id', 'type', 'brand', 'model', 'storage', 'picture', 'is_deleted', 'variants']
+        fields = ['id', 'type', 'brand', 'model', 'storage', 'picture', 'is_deleted', 'created_at', 'variants', 'max_price']
+        read_only_fields = ['created_at']
 
 # Shopping cart serializer
 class ShoppingCartItemSerializer(serializers.ModelSerializer):
@@ -51,3 +59,14 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'email', 'auth0_id', 'role', 'date_joined', 'shopping_cart', 'order_history']
         read_only_fields = ['email', 'auth0_id', 'role', 'date_joined']  
+
+class NewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsItem
+        fields = ['id', 'text', 'picture', 'date_created']
+        read_only_fields = ['date_created']
+
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = ['name', 'product_type']

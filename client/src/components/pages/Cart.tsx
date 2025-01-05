@@ -1,25 +1,32 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../elements/NavBar.tsx";
-import { CartItem } from "../../types/productTypes.ts";
+import { CartContextType, CartItem } from "../../types/productTypes.ts";
 import { useAuthToken } from "../../AuthTokenContext.js";
 import { updateCartItem, deleteCartItem, getAllCart } from "../../utility/shoppingCartApi.js";
 import Footer from "../elements/Footer.tsx";
 import CartCard from "../elements/CartElements/CartCard.tsx";
 import { submitOrder } from "../../utility/profileApi.js";
 import { toast } from "react-toastify";
+import { useCart } from "../../CartContext.js";
 
 export default function Cart() {
     const [userCart, setUserCart] = useState<CartItem[]>([]);
     const { accessToken } = useAuthToken();
     const [totalCost, setTotalCost] = useState(0);
+    const { updateCartCount } = useCart() as CartContextType;
 
+    // Get the cart upon change in access token
     useEffect(() => {
         getCart();
     }, [accessToken]);
 
+    // Get the total cost and also change the cart count whenever user cart changes
     useEffect(() => {
         if (userCart) {
             getCost();
+            // Update the cart count in context whenever cart changes
+            const totalItems = userCart.reduce((sum, item) => sum + item.quantity, 0);
+            updateCartCount(totalItems);
         }
     }, [userCart]);
 
@@ -35,7 +42,7 @@ export default function Cart() {
         setTotalCost(value);
     }
 
-    // Function to update a cart item when incremente on the individual product level
+    // Function to update a cart item when incremented on the individual product level
     async function updateCart(cartId: number, newQuantity: number) {
         try {
             const response = await updateCartItem(cartId, newQuantity, accessToken);
@@ -74,6 +81,7 @@ export default function Cart() {
                 toast.success("Successfully submitted all items to cart");
                 setUserCart([]);
                 setTotalCost(0);
+                updateCartCount(0);
             }
             else {
                 // Notify user if it was a stock number issue

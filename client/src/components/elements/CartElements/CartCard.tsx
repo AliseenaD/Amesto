@@ -15,6 +15,26 @@ export default function CartList({ products, updateCartItem, deleteCartItem, ord
         return formattedNumber;
     }
 
+
+    // Convert number to farsi
+    const toPersianNumbers = (value: number) => {
+        const persianNumbers = {
+            '0': '۰',
+            '1': '۱',
+            '2': '۲',
+            '3': '۳',
+            '4': '۴',
+            '5': '۵',
+            '6': '۶',
+            '7': '۷',
+            '8': '۸',
+            '9': '۹',
+            '.': '.'
+        };
+
+        return value.toString().replace(/[0-9.]/g, c => persianNumbers[c] || c);
+    }
+
     return (
         <Fade triggerOnce direction="up">
             <div className="cart-card-content">
@@ -34,10 +54,10 @@ export default function CartList({ products, updateCartItem, deleteCartItem, ord
                     <div className="total-section">
                         <p id="total-label">مجموع:</p>
                         <div className="total-cost">
-                            <p>ریال</p>
                             <p>
-                                {formatNumber(totalCost)}
+                                {toPersianNumbers(formatNumber(totalCost))}
                             </p>
+                            <p>ریال</p>
                         </div>
                     </div>
                     <button className="checkout-button" onClick={orderCart}>پرداخت</button>

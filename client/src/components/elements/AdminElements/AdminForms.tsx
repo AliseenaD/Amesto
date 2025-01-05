@@ -6,8 +6,18 @@ import AllProducts from "./AllProducts.tsx";
 import DeleteProduct from "./DeleteProduct.tsx";
 import EditProducts from "./EditProducts.tsx";
 import OrderStatus from "./OrderStatus.tsx";
+import { useAuth0 } from "@auth0/auth0-react";
+import AddNews from "./AddNews.tsx";
+import DeleteNews from "./DeleteNews.tsx";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 
 export default function AdminForms() {
+    const { logout } = useAuth0();
+    const [page, setPage] = useState<number>(1);
+    const [hasNext, setHasNext] = useState<boolean>(true);
+    const [hasPrevious, setHasPrevious] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const allOptions = [
         {
             title: 'همه محصولات',
@@ -29,11 +39,16 @@ export default function AdminForms() {
             title: 'حذف محصول',
             component: <DeleteProduct />
         },
+        {
+            title: 'اخبار جدید ایجاد کنید',
+            component: <AddNews />
+        },
+        {
+            title: 'حذف خبر',
+            component: <DeleteNews />
+        }
     ];
     const[selection, setSelection] = useState(allOptions[0]);
-    const[products, setProducts] = useState([]);
-
-
 
     return (
         <Fade triggerOnce direction="up">

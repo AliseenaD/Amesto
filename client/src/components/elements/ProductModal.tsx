@@ -9,11 +9,14 @@ import { addToCart } from "../../utility/shoppingCartApi";
 import { useAuthToken } from "../../AuthTokenContext";
 import { toast } from 'react-toastify';
 import numeral from 'numeral';
+import { useCart } from "../../CartContext";
+import { CartContextType } from "../../types/productTypes";
 
 export default function ProductModal({ product, variants, handleClose }) {
     const { loginWithRedirect, isAuthenticated } = useAuth0();
     const [selectedVariant, setSelectedVariant] = useState(variants[0]);
     const { accessToken } = useAuthToken();
+    const { incrementCart } = useCart() as CartContextType;
     
     // Ensure you cannot scroll when modal is open
     useEffect(() => {
@@ -54,6 +57,8 @@ export default function ProductModal({ product, variants, handleClose }) {
         }
         else if (selectedVariant.quantity >= 1) {
             await addToCart(product.id, selectedVariant.id, 1, accessToken);
+            // Now increment cart context
+            incrementCart();
             toast.success("محصول به سبد خرید اضافه شد");
         }
     }
@@ -62,6 +67,25 @@ export default function ProductModal({ product, variants, handleClose }) {
     function formatNumber(price: number) {
         const formattedNumber = numeral(price).format('0,0');
         return formattedNumber;
+    }
+
+     // Convert number to farsi
+     const toPersianNumbers = (value: number) => {
+        const persianNumbers = {
+            '0': '۰',
+            '1': '۱',
+            '2': '۲',
+            '3': '۳',
+            '4': '۴',
+            '5': '۵',
+            '6': '۶',
+            '7': '۷',
+            '8': '۸',
+            '9': '۹',
+            '.': '.'
+        };
+
+        return value.toString().replace(/[0-9.]/g, c => persianNumbers[c] || c);
     }
 
     return ReactDOM.createPortal(
@@ -89,7 +113,8 @@ export default function ProductModal({ product, variants, handleClose }) {
                             </div>
                             <div className="product-price">
                                 <p id="product-color">قیمت:</p>
-                                <p id="product-price">{formatNumber(selectedVariant.price)}</p>
+                                <p id="product-price">{toPersianNumbers(formatNumber(selectedVariant.price))}</p>
+                                <p id="product-price">ریال</p>
                             </div>
                         </div>
                         <button className={`cart-button ${selectedVariant.quantity >= 1 && isAuthenticated ? '' : 'unavailable'}`} onClick={addProduct}>

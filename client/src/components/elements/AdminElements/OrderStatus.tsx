@@ -1,72 +1,159 @@
 import React, { useEffect, useState } from "react";
 import "./adminStyles.css";
 import { Order } from "../../../types/productTypes";
-import { getOrders, updateStatus } from "../../../utility/OrderHistoryApi";
+import { getOrders, getPendingOrders, getProcessedOrders, updateStatus } from "../../../utility/OrderHistoryApi";
 import { useAuthToken } from "../../../AuthTokenContext";
 import { toast } from 'react-toastify';
 import numeral from 'numeral';
 import { Fade } from "react-awesome-reveal";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 
 export default function OrderStatus() {
     const { accessToken } = useAuthToken()
     const [orders, setOrders] = useState<Order[]>([]);
-    const [status, setStatus] = useState('All');
-    const [selectedOrders, setSelectedOrders] = useState<Order[]>([])
-
-    // Fetch products on the page load
+    const filterOptions = ['All', 'Processed', 'Pending'];
+    const [status, setStatus] = useState<string>(filterOptions[0]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [hasNext, setHasNext] = useState<boolean>(true);
+    const [hasPrevious, setHasPrevious] = useState<boolean>(false);
+    const [page, setPage] = useState<number>(1);
+    
+    // Fetch orders on the page load
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [page, status]);
 
-    // Sets the selected orders to whatever the status selected is
-    useEffect(() => {
-        if (status === 'All') {
-            setSelectedOrders(orders);
-        }
-        else {
-            const filteredOrders = orders.filter((order) => order.order_status.toLowerCase() === status.toLowerCase());
-            setSelectedOrders(filteredOrders);
-        }
-    }, [status]);
-
-    // Get all of the orders
+    // Fetch the type of order depending on the current status
     async function fetchOrders() {
-        try {
-            const results = await getOrders(accessToken);
-            setOrders(results);
-            setSelectedOrders(results); // Set selected orders to full list of orders initially
-        }
-        catch (error) {
-            console.error("Error fetching products:", error);
+        switch (status) {
+            case 'All':
+                fetchAllOrders();
+                break;
+            case 'Processed':
+                fetchProcessed();
+                break;
+            case 'Pending':
+                fetchPending();
+                break;
         }
     }
 
-    // Function that formats the date correctly
-    const formatDate = (dateString: string) => {
+    // Get all of the orders
+    async function fetchAllOrders() {
+        setIsLoading(true);
+        try {
+            const result = await getOrders(accessToken, page);
+
+            // Set pagination states
+            if (!result.next) {
+                setHasNext(false);
+            }
+            else {
+                setHasNext(true);
+            }
+            if (!result.previous) {
+                setHasPrevious(false);
+            }
+            else {
+                setHasPrevious(true);
+            }
+
+            setOrders(result.results);
+        }
+        catch (error) {
+            console.error("Error fetching orders:", error);
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }
+
+    // Get orders that are pending
+    async function fetchPending() {
+        setIsLoading(true);
+        try {
+            const result = await getPendingOrders(accessToken, page);
+
+            // Set pagination states
+            if (!result.next) {
+                setHasNext(false);
+            }
+            else {
+                setHasNext(true);
+            }
+            if (!result.previous) {
+                setHasPrevious(false);
+            }
+            else {
+                setHasPrevious(true);
+            }
+
+            setOrders(result.results);
+        }
+        catch (error) {
+            console.error("Error fetching orders:", error);
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }
+
+    // Get orders that are processed
+    async function fetchProcessed() {
+        setIsLoading(true);
+        try {
+            const result = await getProcessedOrders(accessToken, page);
+
+            // Set pagination states
+            if (!result.next) {
+                setHasNext(false);
+            }
+            else {
+                setHasNext(true);
+            }
+            if (!result.previous) {
+                setHasPrevious(false);
+            }
+            else {
+                setHasPrevious(true);
+            }
+
+            setOrders(result.results);
+        }
+        catch (error) {
+            console.error("Error fetching orders:", error);
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }
+
+    // Function to convert date to Persian date time
+    function convertDate(dateString: string): string {
         const date = new Date(dateString);
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        const year = date.getFullYear();
-        return `${month}/${day}/${year}`;
-    };
+        return date.toLocaleDateString('fa-IR', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    }
 
     // Function that sets the order status upon button click
     async function handleOrderStatusPress(order: Order) {
         const newStatus = order.order_status === 'Pending' ? 'Processed' : 'Pending';
         try {
             const result = await updateStatus(accessToken, newStatus, order.id);
-            if (result?.success) {
+            if (result && result.success) {
                 // Update the list locally
                 const updatedOrders = orders.map(item => item.id === order.id ? {...item, order_status: newStatus} : item);
-                setOrders(updatedOrders);
-
-                // Now update the selected orders
-                if (status === 'All') {
-                    setSelectedOrders(updatedOrders);
+                // Filter by status if status is not 'All'
+                if (status !== 'All') {
+                    const filteredOrders = updatedOrders.filter(item => item.order_status === status);
+                    setOrders(filteredOrders);
                 }
                 else {
-                    const filteredOrders = updatedOrders.filter(item => item.order_status.toLowerCase() === status.toLowerCase());
-                    setSelectedOrders(filteredOrders);
+                    setOrders(updatedOrders);
                 }
             }
         }
@@ -82,51 +169,81 @@ export default function OrderStatus() {
         return formattedNumber;
     }
 
-    const filterOptions = ['All', 'Processed', 'Pending'];
+    // Convert number to farsi
+    const toPersianNumbers = (value: number) => {
+        const persianNumbers = {
+            '0': '۰',
+            '1': '۱',
+            '2': '۲',
+            '3': '۳',
+            '4': '۴',
+            '5': '۵',
+            '6': '۶',
+            '7': '۷',
+            '8': '۸',
+            '9': '۹',
+            '.': '.'
+        };
+
+        return value.toString().replace(/[0-9.]/g, c => persianNumbers[c] || c);
+    }
+
+    // Handle the button press for filtering orders
+    function handleButtonPress(newStatus: string) {
+        setStatus(newStatus);
+        setPage(1);
+    }
+
+    // Handles the pagination when the page button is clicked
+    function handlePageButtonPress(increment: number) {
+        setPage(currPage => currPage + increment);
+    }
 
     return (
         <Fade triggerOnce>
-            <div className="order-filtering-options">
-                <ul className="filtering-list">
-                    {filterOptions.map(item => (
-                        <li key={item} onClick={()=>setStatus(item)} className={`filter-item ${item === status ? ' filter-selected': ''}`}>{item}</li>
-                    ))}
-                </ul>
+            <div className="filter-products-container">
+                {filterOptions.map(item => (
+                    <button key={item} className={`product-type-button ${status === item ? 'type-active' : ''}`} onClick={() => handleButtonPress(item)}>{item}</button>
+                ))}
             </div>
-            <div className="order-status-content">
-                {selectedOrders && selectedOrders.length > 0 ? (
-                    selectedOrders.map(order => (
-                    <div key={order.id} className="order-card">
-                        <div className="order-header">
-                        <h3 className="order-id">Order #{order.id}</h3>
-                        <span className={`order-status ${order.order_status.toLowerCase()}`}>
-                            {order.order_status}
-                        </span>
-                        </div>
-                        <div className="order-details">
-                        <p className="order-date">سفارش داده شد: {formatDate(order.order_date)}</p>
-                        <p className="order-email">Email: {order.order_email}</p>
-                        </div>
-                        <div className="order-items">
-                        {order.items.map((item, index) => (
-                            <div key={index} className="order-item">
-                            <span className="item-brand">{item.product.brand}</span>
-                            <span className="item-model">{item.product.model}</span>
-                            <span className="item-color">{item.variant.color}</span>
-                            <span className="item-quantity">Qty: {item.quantity}</span>
+            <div className="delete-news-container">
+                <div className="order-grid">
+                    {orders.map(order => (
+                        <div key={order.id} className="order-card">
+                            <div className="order-header">
+                            <h3 className="order-id">Order #{order.id}</h3>
+                            <span className={`order-status ${order.order_status.toLowerCase()}`}>
+                                {order.order_status}
+                            </span>
                             </div>
-                        ))}
+                            <div className="order-details">
+                            <p className="order-date">سفارش داده شد: {convertDate(order.order_date)}</p>
+                            <p className="order-email">Email: {order.order_email}</p>
+                            </div>
+                            <div className="order-items">
+                                {order.items.map((item, index) => (
+                                    <div key={index} className="order-item">
+                                    <span className="item-brand">{item.product.brand}</span>
+                                    <span className="item-model">{item.product.model}</span>
+                                    <span className="item-color">{item.variant.color}</span>
+                                    <span className="item-quantity">Qty: {item.quantity}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="order-footer">
+                                <button onClick={() => handleOrderStatusPress(order)} className="order-status-button">به روز رسانی وضعیت</button>
+                                <p className="order-total">مجموع: {toPersianNumbers(formatNumber(order.total_price))}</p>
+                            </div>
                         </div>
-                        <div className="order-footer">
-                            <button onClick={() => handleOrderStatusPress(order)} className="order-status-button">به روز رسانی وضعیت</button>
-                            <p className="order-total">مجموع: {formatNumber(order.total_price)}</p>
-                        </div>
-                    </div>
-                    ))
-                ) : (
-                    <p className="no-orders">هیچ سفارشی انجام نشده است</p>
-                )}
+                    ))}
+                </div>
+            </div>
+            <div className="pagination-buttons-container">
+                <button className="pagination-arrow" disabled={isLoading || !hasPrevious} onClick={() => handlePageButtonPress(-1)}><MdOutlineKeyboardArrowLeft size={20} /></button>
+                <div className="pagination-indicator">{toPersianNumbers(page)}</div>
+                <button className="pagination-arrow" disabled={isLoading || !hasNext} onClick={() => handlePageButtonPress(1)}><MdOutlineKeyboardArrowRight size={20} /></button>
             </div>
         </Fade>
     );
 }
+

@@ -47,16 +47,35 @@ export default function CartProduct({ product, updateCartItem, deleteCartItem }:
                 <div className="cart-header">{product.product.brand}</div>
                 <div className="cart-header">{title}</div>
                 { country ? (<div className="cart-specifics">{country}</div>) : '' }
-                { product.product.storage ? (<div className="cart-specifics">{product.product.storage}GB</div>) : '' } 
+                { product.product.storage ? (<div className="cart-specifics">{product.product.storage} GB</div>) : '' } 
                 <div className="cart-specifics" id="cart-color">
                     رنگ:
                     <div className="cart-color-square" style={{backgroundColor: `${product.variant.color}`}}></div>
                 </div>
                 <div className="item-cost">
-                    <p>{formatNumber(Number(product.variant.price))}</p>
+                    <p>{toPersianNumbers(formatNumber(Number(product.variant.price)))}</p>
                 </div>
             </div>
         );
+    }
+
+    // Convert number to farsi
+    const toPersianNumbers = (value: number) => {
+        const persianNumbers = {
+            '0': '۰',
+            '1': '۱',
+            '2': '۲',
+            '3': '۳',
+            '4': '۴',
+            '5': '۵',
+            '6': '۶',
+            '7': '۷',
+            '8': '۸',
+            '9': '۹',
+            '.': '.'
+        };
+
+        return value.toString().replace(/[0-9.]/g, c => persianNumbers[c] || c);
     }
 
     return (

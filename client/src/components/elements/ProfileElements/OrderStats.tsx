@@ -46,26 +46,64 @@ export default function OrderStats({ orders }: OrderProps) {
                     <p className="order-id">Order #{order.id}</p>
                     <div className="order-date">
                         <CiCalendar size={18} color="gray" />
-                        <p>{formatDate(order.order_date)}</p>
+                        <p>{convertDate(order.order_date)}</p>
                     </div>
                     <div className="products-list-container">
-                            <p>محصولات:</p>
-                            <ul className="products-list">
-                                {order.items.map(item => (
-                                    <li>{item.product.brand} {item.product.model}</li>
-                                ))}
-                            </ul>
+                        <p>محصولات:</p>
+                        <ul className="products-list">
+                            {order.items.map(item => (
+                                <li key={item.product.id} className="product-list-item">
+                                    <span className="product-quantity">
+                                        {toPersianNumbers(item.quantity)} x
+                                    </span>
+                                    <div className="product-details">
+                                        <span className="product-name">
+                                            {item.product.brand} {item.product.model}
+                                        </span>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
                 <div className="order-card-status">
                     <p className={`order-status ${order.order_status}`}>{order.order_status}</p>
                     <div className="order-price">
                         <p>ریال</p>
-                        <p>{formatNumber(order.total_price)}</p>
+                        <p>{toPersianNumbers(formatNumber(order.total_price))}</p>
                     </div>
                 </div>
             </div>
         );
+    }
+
+    // Function to convert date to Persian date time
+    function convertDate(dateString: string): string {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('fa-IR', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    }
+
+    // Convert number to farsi
+    const toPersianNumbers = (value: number) => {
+        const persianNumbers = {
+            '0': '۰',
+            '1': '۱',
+            '2': '۲',
+            '3': '۳',
+            '4': '۴',
+            '5': '۵',
+            '6': '۶',
+            '7': '۷',
+            '8': '۸',
+            '9': '۹',
+            '.': '.'
+        };
+
+        return value.toString().replace(/[0-9.]/g, c => persianNumbers[c] || c);
     }
 
     return (
@@ -75,7 +113,7 @@ export default function OrderStats({ orders }: OrderProps) {
             <div className="order-stats-content">
                 <div className="account-summary">
                     <div className="info-header">
-                        <IoIosStats size={40} /><p>خلاصه حساب</p>
+                        <p>خلاصه حساب</p><IoIosStats size={40} />
                     </div>
                     <div className="total-orders-content">
                         <p className="order-stat-number" id="order-sum">{orders.length}</p>
@@ -83,22 +121,22 @@ export default function OrderStats({ orders }: OrderProps) {
                     </div>
                     <div className="total-sum-content">
                         <div className="order-stat-number" id="total-sum">
+                            <p>{toPersianNumbers(formatNumber(totalCost))}</p>
                             <p>ریال</p>
-                            <p>{formatNumber(totalCost)}</p>
                         </div>
                         <p className="order-stat-descriptor">کل هزینه شده</p>
                     </div>
                 </div>
                 <div className="order-summary">
                     <div className="info-header" id="order-history-header">
-                            <FiPackage size={40} /><p>تاریخچه سفارش</p>
+                        <p>تاریخچه سفارش</p><FiPackage size={40} />
                     </div>
                     <div className="past-orders-content">
                         {orders.length > 0 ? (
                             orders.map(order => (
                                 orderCard(order)
                             ))
-                        ) : ''}
+                        ) : <p style={{textAlign: 'center'}}>شما چیزی سفارش نداده اید</p>}
                     </div>
                 </div>
             </div>

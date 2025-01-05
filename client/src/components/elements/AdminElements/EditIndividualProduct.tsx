@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { editProduct } from "../../../utility/productsApi";
 import { IoColorPalette, IoCreate, IoTrash } from "react-icons/io5";
 
-export default function EditIndividualProduct({ product }: IndividualProps) {
+export default function EditIndividualProduct({ product, fetchProducts }: IndividualProps) {
     const { accessToken } = useAuthToken();
     const [settingOpen, setSettingOpen] = useState(false);
     const [formData, setFormData] = useState({
@@ -75,6 +75,7 @@ export default function EditIndividualProduct({ product }: IndividualProps) {
             if (result && result.success) {
                 toast.success('Updated product successfully');
                 setSettingOpen(false);
+                fetchProducts();
                 return;
             }
             else {
@@ -145,7 +146,7 @@ export default function EditIndividualProduct({ product }: IndividualProps) {
                                         placeholder="Color (hex)"
                                         value={variant.color}
                                         onChange={(e) => handleVariantChange(index, 'color', e.target.value)}
-                                        pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+                                        //pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
                                         title="Enter a valid hex color code"
                                     />
                                     <input

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import "../styles/elementStyles.css";
 import ProductModal from "./ProductModal.tsx";
+import { CardPreviewProps } from "../../types/productTypes.ts";
 
-export default function ProductCardPreview({ product, displayStorage }) {
+export default function ProductCardPreview({ product, displayStorage, displayNew }: CardPreviewProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Alter name to provide name of country outside of title if present
@@ -41,7 +42,12 @@ export default function ProductCardPreview({ product, displayStorage }) {
             <div className="preview-card-content" onClick={handleCardOpen}>
                 <img className="preview-picture" style={product.type === 'Phone' ? {height: '300px'} : {height: '150px'}} src={product.picture} alt={product.model}></img>
                 <div className="preview-info">
-                    <p className="preview-product-brand">{product.brand}</p>
+                    {displayNew ? (
+                        <div className="preview-header">
+                            <p className="preview-product-brand">{product.brand}</p>
+                            <p className="new-box">New</p>
+                        </div>
+                    ): <p className="preview-product-brand">{product.brand}</p>}
                     { handleCountry() }
                     { 
                         product.variants ? (

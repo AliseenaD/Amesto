@@ -30,7 +30,7 @@ export default function BannerImage({ image, title }) {
 
     return (
         <Fade triggerOnce direction="up">
-            <div className="banner-content" style={{ backgroundImage: `url(${image})` }}>
+            <div className="banner-content" style={{ backgroundImage: `url(${image})`, backgroundPosition: `${title !== 'ساعت' && title !== 'هدفون' ? 'top' : 'center'}` }}>
                 <p className="banner-title" style={{ fontSize: getTitleSize(windowDim.width) }}>{title}</p>
             </div>
         </Fade>

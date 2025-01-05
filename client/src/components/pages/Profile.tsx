@@ -10,7 +10,8 @@ import Footer from "../elements/Footer.tsx";
 
 export default function Profile() {
     const { accessToken } = useAuthToken();
-    const [profile, setProfile] = useState<User>({} as User);
+    const [profile, setProfile] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (accessToken) {
@@ -27,22 +28,38 @@ export default function Profile() {
         catch (error) {
             console.error('Error fetching role', error);
         }
+        finally {
+            setLoading(false);
+        }
     }
-    return(
-        <>
-            <NavBar />
-            { profile && (profile.role !== 'Admin') ? (
-                <>
-                    <PersonalInfo profile={profile} />
-                    <OrderStats orders={profile.order_history} />
-                    <Footer />
-                </>
-            ) : (
-                <>
-                    <AdminForms />
-                    <Footer />
-                </>
-            )}
-        </>
-    );
+
+    if (loading || !profile) {
+        return (
+            <>
+                <NavBar />
+                <p>Loading...</p>
+            </>
+        )
+    }
+
+    // Decide which screen to present based on role
+    if (profile.role === 'Admin') {
+        return (
+            <>
+                <NavBar />
+                <AdminForms />
+                <Footer />
+            </>
+        )
+    }
+    else {
+        return (
+            <>
+                <NavBar />
+                <PersonalInfo profile={profile} />
+                <OrderStats orders={profile.order_history} />
+                <Footer />
+            </>
+        )
+    }
 }

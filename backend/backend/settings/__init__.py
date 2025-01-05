@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'authlib',
     'api',
+    'django_redis',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,13 @@ TEMPLATES = [
         },
     },
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+    }
+}
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
@@ -109,7 +117,8 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '60/minute',
         'user': '120/minute'
-    }
+    },
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 }
 
 # Auth0 settings
