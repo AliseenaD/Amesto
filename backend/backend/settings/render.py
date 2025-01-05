@@ -1,6 +1,14 @@
 from . import *
 import dj_database_url
 
+# Static files configuration
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Add whitenoise to middleware
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
 # Database configuration
 DATABASE_URL = os.getenv('DATABASE_URL')
 DATABASES = {
@@ -28,12 +36,3 @@ ALLOWED_HOSTS = [
 CORS_ALLOWED_ORIGINS = [
     'https://amesto.vercel.app',
 ]
-
-# Add whitenoise to middleware
-MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-
-# Add this for whitenoise
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Static files
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
