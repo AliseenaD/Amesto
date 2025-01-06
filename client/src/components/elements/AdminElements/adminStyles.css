@@ -965,6 +965,7 @@ ADMIN PAGE STYLES
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE and Edge */
+    direction: rtl;
 }
 
 .form-options::-webkit-scrollbar {
@@ -1046,7 +1047,8 @@ ADMIN PAGE STYLES
     gap: 1.5rem;
     font-size: 20px;
     margin: 0;
-    text-align: right;
+    width: 100%; /* Ensure full width */
+    justify-content: flex-start;
 }
 
 .options-list li {
