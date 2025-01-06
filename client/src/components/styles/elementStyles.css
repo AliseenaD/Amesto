@@ -838,12 +838,8 @@ FOOTER STYLES
         gap: 0.5rem;
     }
 
-    .nav-link {
-        font-size: 16px !important; /* Override any other font-size settings */
-    }
-
     /* Include hamburger menu items */
-    .left-links .nav-link,
+    .left-links .nav-link:not(#home-link),
     .right-links .nav-link {
         font-size: 16px !important;
     }
