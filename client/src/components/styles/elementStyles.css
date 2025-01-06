@@ -826,7 +826,7 @@ FOOTER STYLES
 
     .list-links {
         position: relative;
-        font-size: 15px;
+        font-size: 16px;
         overflow: hidden;
         max-height: 0;
         display: flex;
@@ -836,6 +836,20 @@ FOOTER STYLES
         opacity: 0;
         transition: max-height var(--transition-time) ease-in-out, opacity 0s ease-in-out;
         gap: 0.5rem;
+    }
+
+    .nav-link {
+        font-size: 16px !important; /* Override any other font-size settings */
+    }
+
+    /* Include hamburger menu items */
+    .left-links .nav-link,
+    .right-links .nav-link {
+        font-size: 16px !important;
+    }
+
+    .mobile-dropdown .nav-link {
+        font-size: 16px !important;
     }
 
     .login-button {
@@ -886,6 +900,20 @@ FOOTER STYLES
     .product-info-description {
         width: 70%;
         padding: 1rem 1rem;
+    }
+
+    #cart, #profile {
+        font-size: 16px !important;
+    }
+
+    /* Ensure accessory link text size */
+    #accesory-link {
+        font-size: 16px;
+    }
+
+    /* Remove any font-size variations in mobile dropdown */
+    .mobile-dropdown .right-links {
+        font-size: 16px;
     }
 
     /*
