@@ -962,6 +962,13 @@ ADMIN PAGE STYLES
     width: 100%;
     overflow-x: auto; 
     white-space: nowrap; 
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.form-options::-webkit-scrollbar {
+    display: none; 
 }
 
 .filter-products-container {
@@ -1034,9 +1041,9 @@ ADMIN PAGE STYLES
     box-sizing: border-box;
     padding: 1.5rem;
     list-style: none;
-    display: flex; 
-    justify-content: space-around; 
-    align-items: center;
+    display: inline-flex;
+    min-width: min-content; 
+    gap: 1.5rem;
     font-size: 20px;
     margin: 0;
 }
@@ -1046,6 +1053,7 @@ ADMIN PAGE STYLES
     text-align: center;
     display: inline-block;
     padding: 0 1rem; 
+    flex-shrink: 0;
 }
 
 .selected-option {
@@ -1062,5 +1070,15 @@ ADMIN PAGE STYLES
 
     .search-icon-all, .search-icon-edit {
         right: 40px;
+    }
+
+    .options-list {
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    .options-list li {
+        padding: 0.5rem;
+        font-size: 16px; /* Smaller font size for mobile */
     }
 }
