@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import "../styles/newsStyles.css";
 import NavBar from "../elements/NavBar.tsx";
 import Footer from "../elements/Footer.tsx";
-import { NewsItem, PaginatedResponse } from "../../types/productTypes.ts";
+import { NewsItem } from "../../types/productTypes.ts";
 import { getNews } from "../../utility/newsApi.js";
 import NewsDetailCard from "../elements/NewsElements/NewsDetailCard.tsx";
+import loadingGif from "../../assets/Loading.webp";
 
 export default function News() {
     const [news, setNews] = useState<NewsItem[]>([]);
@@ -74,7 +75,7 @@ export default function News() {
             setIsLoading(false);
         }
     }
-    
+
     return (
         <>
             <NavBar />
@@ -85,7 +86,11 @@ export default function News() {
                     ))}
                 </div>
                 <div ref={loaderRef} className="news-loader">
-                    {isLoading && <p>در حال بارگیری اخبار بیشتر</p>}
+                    {isLoading && (
+                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                            <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
+                        </div>
+                    )}
                 </div>
             </div>
             <Footer />
