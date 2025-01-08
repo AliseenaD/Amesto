@@ -43,17 +43,20 @@ export default function CartList({ products, isLoading, updateCartItem, deleteCa
                     <p>AMESTO Cart</p>
                 </div>
                 <div className="cart-card-list">
-                    {isLoading && (
+                    {isLoading ? (
                         <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
                             <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
                         </div>
-                    )}
-                    {products.length > 0 ? products.map(prod => (
+                    ) : 
+                        <>
+                            {products.length > 0 ? products.map(prod => (
                         <>
                             <CartProduct key={prod.id} product={prod} updateCartItem={updateCartItem} deleteCartItem={deleteCartItem} />
                             { products.indexOf(prod) === products.length - 1 ? '' : <hr className="product-divider" /> }
                         </>
                     )) : <p style={{textAlign: 'center', fontSize: '20px'}}>هیچ کالایی در سبد خرید شما وجود ندارد</p>}
+                        </>
+                    }
                 </div>
                 <div className="checkout-section">
                     <div className="total-section">
