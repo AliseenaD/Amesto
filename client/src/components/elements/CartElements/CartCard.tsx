@@ -5,9 +5,9 @@ import CartProduct from "./CartProduct.tsx";
 import { TiShoppingCart } from "react-icons/ti";
 import { Fade } from "react-awesome-reveal";
 import numeral from 'numeral';
+import loadingGif from "../../../assets/Loading.webp";
 
-
-export default function CartList({ products, updateCartItem, deleteCartItem, orderCart, totalCost }: CartListType) {
+export default function CartList({ products, isLoading, updateCartItem, deleteCartItem, orderCart, totalCost }: CartListType) {
 
     // Formats the cost to be more readable
     function formatNumber(price: number) {
@@ -43,6 +43,11 @@ export default function CartList({ products, updateCartItem, deleteCartItem, ord
                     <p>AMESTO Cart</p>
                 </div>
                 <div className="cart-card-list">
+                    {isLoading && (
+                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                            <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
+                        </div>
+                    )}
                     {products.length > 0 ? products.map(prod => (
                         <>
                             <CartProduct key={prod.id} product={prod} updateCartItem={updateCartItem} deleteCartItem={deleteCartItem} />

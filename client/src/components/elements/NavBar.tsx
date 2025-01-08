@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
 import "../styles/elementStyles.css";
 import { Link } from "react-router-dom";
 import { Fade } from 'react-awesome-reveal';
@@ -7,14 +7,16 @@ import { BiSolidUser } from "react-icons/bi";
 import { TiShoppingCart } from "react-icons/ti";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { useCart } from "../../CartContext";
+import { useAuthToken } from "../../AuthTokenContext";
 
 
 export default function NavBar() {
-    const { loginWithRedirect, isAuthenticated } = useAuth0();
+    const { accessToken } = useAuthToken();
     const [menu, setMenu] = useState(false);
     const [windowDim, setWindowDim] = useState(getWindowDimensions());
     const [accessoriesOpen, setAccessoriesOpen] = useState(false);
     const { cartCount } = useCart();
+    const navigate = useNavigate();
 
     // Get window dimensions
     function getWindowDimensions() {
@@ -65,6 +67,16 @@ export default function NavBar() {
         );
     }
 
+    const assignNews = () => {
+        if (windowDim.width < 767) {
+            return (
+                <li className="left-links">
+                    <Link className="nav-link" to='/news'>بلاگ</Link>
+                </li>
+            );
+        }
+    }
+
     return (
         <div className="nav-wrapper">
             <Fade triggerOnce direction="up">
@@ -84,9 +96,6 @@ export default function NavBar() {
                         <li className="left-links">
                             <Link className="nav-link" to='/speakers'>بلندگوها</Link>
                         </li>
-                        <li className="left-links">
-                            <Link className="nav-link" to='/news'>اخبار</Link>
-                        </li>
                         <li className="left-links" id="accesory-link" {...(windowDim.width >= 767 ? {onMouseEnter: () => setAccessoriesOpen(true),onMouseLeave: () => setAccessoriesOpen(false)} 
                         : {onClick: () => setAccessoriesOpen(!accessoriesOpen)})}>
                         {windowDim.width < 767 ? <MdKeyboardArrowLeft size={25} className={`accessory-arrow ${accessoriesOpen ? 'arrow-active' : ''}`} />: ''} لوازم جانبی 
@@ -98,8 +107,13 @@ export default function NavBar() {
                                 </ul>
                             ) : '' : mobileAccessoryWindow()}
                         </li>
+                        {windowDim.width >= 767 ? (
+                            <li className="left-links">
+                                <Link className="nav-link" to='/news'>بلاگ</Link>
+                            </li>
+                        ) : ''}
                         {
-                            isAuthenticated ? 
+                            accessToken ? 
                             <>
                                 <li className="right-links">
                                     <Link className="nav-link" id="cart" to='/cart'>
@@ -116,11 +130,18 @@ export default function NavBar() {
                                     </Link>
                                 </li>
                                 <li className="right-links"><Link className="nav-link" id="profile" to='/profile'>{windowDim.width >= 767 ? <BiSolidUser size={30} color="#16181c" /> : 'نمایه'}</Link></li>
+                                {assignNews()}
                             </>
                             : 
-                            <li className="right-links">
-                                <button className="login-button" onClick={() => loginWithRedirect()}>وارد شوید</button>
-                            </li>
+                            (
+                            <>
+                                {assignNews()}
+                                <li className="right-links">
+                                    <button className="login-button" onClick={() => navigate('/register')}>وارد شوید</button>
+                                </li>
+                            </>
+                                
+                            )
                         }
                     </ul>
                 </div>

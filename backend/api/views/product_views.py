@@ -10,7 +10,7 @@ import uuid
 from ..firebase_config import bucket
 import json
 from ..decorators import require_role
-from ..permissions import Auth0ResourceProtection
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
 import hashlib
 from django.core.cache import cache
@@ -46,9 +46,10 @@ class ProductViewSet(viewsets.ModelViewSet):
     # Set permission requirements for the products
     def get_permissions(self):
         if self.action in ['create', 'update', 'soft_delete']:
-            return [Auth0ResourceProtection()]
+            permission_classes = [IsAuthenticated]
         else:
-            return super().get_permissions()
+            permission_classes = [AllowAny]
+        return [permission() for permission in permission_classes]
     
     # List all of the products
     def list(self, request, *args, **kwargs):

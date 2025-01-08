@@ -1,0 +1,111 @@
+.register-container {
+    width: 100%;
+    height: 100vh;
+    background-color: gainsboro;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-form {
+    border-radius: 20px;
+    background-color: var(--card-background-color);
+    box-sizing: border-box;
+    padding: 1rem 2rem;
+    width: 30%;
+    min-width: 380px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.sign-up-option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 0.5rem;
+    font-size: 18px;
+    border-bottom: 0.8px solid var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.sign-up-button {
+    color: #1c70f6;
+    font-size: 18px;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+
+.sign-up-button:hover {
+    color: #005df1;
+}
+
+.error-container {
+    box-sizing: border-box;
+    margin: 0.5rem;
+    padding: 0.5rem 0;
+    border: 1px solid red;
+    color: red;
+}
+
+.registration-form-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.registration-input {
+    text-align: right;
+    width: 100%;
+    background-color: rgb(233, 233, 233);
+    border: none;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    border-radius: 7px;
+    font-size: 18px;
+}
+
+.registration-label {
+    font-size: 18px;
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.registration-submit {
+    margin: 1rem 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 1rem;
+    border: none;
+    background-color: #1c70f6;
+    color: #f6f6f6;
+    font-size: 18px;
+    border-radius: 7px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.registration-submit:hover {
+    background-color: #005df1;
+}
+
+.registration-cancel {
+    margin: 1rem 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 1rem;
+    border: none;
+    background-color: gainsboro;
+    color: red;
+    font-size: 18px;
+    border-radius: 7px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.registration-cancel:hover {
+    background-color: rgb(157, 157, 157);
+}

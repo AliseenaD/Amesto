@@ -6,6 +6,7 @@ import EditIndividualProduct from "./EditIndividualProduct.tsx";
 import { getAccessories, getHeadphones, getPhones, getSpeakers, getWatches } from "../../../utility/productsApi";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import loadingGif from "../../../assets/Loading.webp";
 
 
 export default function EditProducts() {
@@ -131,6 +132,11 @@ export default function EditProducts() {
             <>
                 <div className="product-category">
                     <h2 className="category-title">{title}</h2>
+                    {isLoading && (
+                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                            <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
+                        </div>
+                    )}
                     {products && products.length > 0 ? (
                         <div className="product-grid">
                             {products.map(product => (

@@ -6,18 +6,14 @@ import AllProducts from "./AllProducts.tsx";
 import DeleteProduct from "./DeleteProduct.tsx";
 import EditProducts from "./EditProducts.tsx";
 import OrderStatus from "./OrderStatus.tsx";
-import { useAuth0 } from "@auth0/auth0-react";
 import AddNews from "./AddNews.tsx";
 import DeleteNews from "./DeleteNews.tsx";
-import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import { useAuthToken } from "../../../AuthTokenContext.js";
+import { IoIosLogOut } from "react-icons/io";
 
 export default function AdminForms() {
-    const { logout } = useAuth0();
-    const [page, setPage] = useState<number>(1);
-    const [hasNext, setHasNext] = useState<boolean>(true);
-    const [hasPrevious, setHasPrevious] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const { logout } = useAuthToken();
+
     const allOptions = [
         {
             title: 'همه محصولات',
@@ -61,6 +57,9 @@ export default function AdminForms() {
                             ))
                         }
                     </ul>
+                </div>
+                <div className="logout-section">
+                    <button className="admin-logout" onClick={logout}><IoIosLogOut size={20} color="red" />خروج</button>
                 </div>
                 {
                     selection.component

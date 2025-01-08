@@ -132,6 +132,7 @@ export interface CartListType {
     deleteCartItem: (cartId: number) => Promise<void>;
     orderCart: () => Promise<void>;
     totalCost: number;
+    isLoading: boolean;
 }
 
 // Type for a complete order

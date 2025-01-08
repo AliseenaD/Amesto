@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../styles/productPages.css";
 import NavBar from "../elements/NavBar.tsx";
 import { BrandType, Product } from "../../types/productTypes.ts";
@@ -11,6 +11,7 @@ import ProductPageCard from "../elements/ProductPageCard.tsx";
 import { getHeadphoneBrands } from "../../utility/brandsApi.js";
 import BannerImage from "../elements/BannerImage.tsx";
 import airpodImage from "../../assets/airpods.jpg";
+import loadingGif from "../../assets/Loading.webp";
 
 export default function Headphones() {
     const [headphones, setHeadphones] = useState<Product[]>([]);
@@ -22,6 +23,7 @@ export default function Headphones() {
     const [attributeSelected, setAttributeSelected] = useState<string>('');
     const [attributeFunction, setAttributeFunction] = useState<((page:number, brand:string) => Promise<void>) | null>(null);
     const [headphoneBrands, setHeadphoneBrands] = useState<BrandType[]>([]);
+    const reference = useRef<HTMLDivElement>(null);
     const attributes = [
         {
             title: 'افزایش قیمت',
@@ -122,6 +124,15 @@ export default function Headphones() {
 
     // Function that will fetch the next page upon button press
     async function onButtonPress(increment: number) {
+        // Scroll to the filter menu
+        setTimeout(() => {
+            if (reference.current) {
+                console.log('scrolling to:', reference.current.offsetTop);
+                window.scrollTo({
+                    top: reference.current.offsetTop,
+                });
+            }
+        }, 50);
         const newPage = page + increment;
         setPage(newPage);
     }
@@ -176,6 +187,7 @@ export default function Headphones() {
         <>
             <NavBar />
             <BannerImage title='هدفون' image={airpodImage} />
+            <div ref={reference}></div>
             <Fade triggerOnce direction="up">
                 <Fade direction="up" triggerOnce>
                 <div className="filter-section">
@@ -234,6 +246,11 @@ export default function Headphones() {
                     </div>
                 </Fade>
                 <div className="products-paginated-container">
+                    {isLoading && (
+                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                            <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
+                        </div>
+                    )}
                     {headphones && headphones.length === 0 ? <p>هیچ محصولی با این وجود ندارد</p> : ''}
                     {headphones && headphones.map(headphone => (
                         <ProductPageCard key={headphone.id} product={headphone} displayColor={true} displayStorage={false} />

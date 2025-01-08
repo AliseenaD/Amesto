@@ -3,11 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from ..models import User, Product, ShoppingCartItem, OrderHistory, OrderItem, ProductVariant
 from ..serializers import UserSerializer, ShoppingCartItemSerializer, OrderHistorySerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.throttling import UserRateThrottle
 from django.db import transaction
-from ..permissions import Auth0ResourceProtection
-from django.conf import settings
 import logging
+from django.contrib.auth.hashers import make_password
 
 logger = logging.getLogger(__name__)
 
@@ -16,58 +16,102 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     throttle_classes = [UserRateThrottle]
-    permission_classes = [Auth0ResourceProtection]
+
+    # All routes require permissions except for the register route
+    def get_permissions(self):
+        if self.action in ['register']:
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
     # Create or verify a user
     @action(detail=False, methods=['post'])
     def verify_user(self, request):
+
         try:
-            if request.auth is None:
-                return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
-            auth0_id = request.auth.get('sub')
-            email = request.auth.get(f'{settings.AUTH0_AUDIENCE}/email')
-            role = request.auth.get(f'https://{settings.AUTH0_AUDIENCE}/roles', ['user'])
+            # get the email and password
+            email = request.data.get('email')
+            password = request.data.get('password')
+            
             # Verify data
-            if not auth0_id or not email:
+            if not email or not password:
                 return Response({"Error": "Unable to retrieve user information"}, status=status.HTTP_400_BAD_REQUEST)
             
-            # Get or create the user
-            user, created = User.objects.get_or_create(
-                auth0_id = auth0_id,
-                defaults= {
-                    'username': email,
-                    'email': email,
-                    'role': role[0] if role else 'user'
-                })
+            try:
+                # Get the user
+                user = User.objects.get(
+                    email=email
+                )
+            # Return 404 error if there is no user
+            except User.DoesNotExist:
+                return Response({"error": "No user found"}, status=status.HTTP_404_NOT_FOUND)
+        
             serializer = self.get_serializer(user)
-            status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
-            return Response({"user": serializer.data, "created": created}, status_code)
+            status_code = status.HTTP_200_OK
+            return Response({"user": serializer.data}, status_code)
         except Exception as e:
             print(f"Error verifying user: {str(e)}")
             return Response({"Error": "Error while verifying"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    # Register new users within the database
+    @action(detail=False, methods=['post'])
+    def register(self, request):
+        # Set of emails used to determine if a user is admin or not
+        ADMIN_EMAILS = [
+            "adaeihagh@gmail.com",
+            "elmzadeh1@gmail.com"
+        ]
+
+        try:
+            # Get the email and password
+            email = request.data.get('email')
+            password = request.data.get('password')
+
+             # Verify data
+            if not email or not password:
+                return Response({"Error": "Unable to retrieve user information"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Check if user already exists and return error
+            if User.objects.filter(email=email).exists():
+                return Response({"error": "User already exists"}, status=status.HTTP_409_CONFLICT)
+            
+            # Set the role
+            role = 'Admin' if email in ADMIN_EMAILS else 'User'
+
+            # create the user
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                role=role
+            )
+
+            serializer = self.get_serializer(user)
+            status_code = status.HTTP_200_OK
+            return Response({"user": serializer.data}, status_code)
+        except Exception as e:
+            print(f"Error verifying user: {str(e)}")
+            return Response({"Error": "Error while verifying"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
     # Get the user profile
     @action(detail=False, methods=['get'])
     def profile(self, request):
-        authId = request.auth.get('sub')
-        user = User.objects.get(auth0_id = authId)
-        serializer = self.get_serializer(user)
+        serializer = self.get_serializer(request.user)
         return Response(serializer.data)
     
     # Get the user shopping cart
     @action(detail=False, methods=['get'])
     def shopping_cart(self, request):
-        authId = request.auth.get('sub')
-        user = User.objects.get(auth0_id = authId)
-        cart_items = ShoppingCartItem.objects.filter(user=user)
+        cart_items = ShoppingCartItem.objects.filter(user=request.user)
         serializer = ShoppingCartItemSerializer(cart_items, many=True)
         return Response(serializer.data)
     
     # Add item to the cart
     @action(detail=False, methods=['post'])
     def add_to_cart(self, request):
-        authId = request.auth.get('sub')
-        user = User.objects.get(auth0_id = authId)
+        user = request.user
         product_id = request.data.get('product')
         variant_id = request.data.get('variant')
         quantity = request.data.get('quantity')
@@ -96,13 +140,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['delete'])
     def delete_from_cart(self, request):
 
-        logger.info(f"Received delete_from_cart request. Auth: {request.auth}")
-        logger.info(f"Request data: {request.data}")
-
-        authId = request.auth.get('sub')
-        logger.info(f"Auth ID: {authId}")
-
-        user = User.objects.get(auth0_id = authId)
+        user = request.user
         logger.info(f"User found: {user.id}")
         cart_item_id = request.data.get('cart_item_id')
         logger.info(f"Cart item ID: {cart_item_id}")
@@ -119,8 +157,7 @@ class UserViewSet(viewsets.ModelViewSet):
     # Update quantity of item in the shopping cart
     @action(detail=False, methods=['patch'])
     def update_cart_item(self, request):
-        authId = request.auth.get('sub')
-        user = User.objects.get(auth0_id = authId)
+        user = request.user
         cart_item_id = request.data.get('cart_item_id')
 
         try:
@@ -138,8 +175,7 @@ class UserViewSet(viewsets.ModelViewSet):
     # View users order history
     @action(detail=False, methods=['get'])
     def order_history(self, request):
-        authId = request.auth.get('sub')
-        user = User.objects.get(auth0_id = authId)
+        user = request.user
         order = OrderHistory.objects.filter(user=user)
         serializer = OrderHistorySerializer(order, many=True)
         return Response(serializer.data)
@@ -148,8 +184,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     @transaction.atomic
     def place_order(self, request):
-        authId = request.auth.get('sub')
-        user = User.objects.get(auth0_id = authId)
+        user = request.user
         cart_items = ShoppingCartItem.objects.filter(user=user)
 
         # Check there are cart items

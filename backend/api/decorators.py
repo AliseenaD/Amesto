@@ -8,10 +8,8 @@ def require_role(required_role):
     def decorator(view_function):
         @wraps(view_function)
         def wrapped_view(self, request, *args, **kwargs):
-            auth0_id = request.auth.get('sub')
             try:
-                user = User.objects.get(auth0_id = auth0_id)
-                if user.role.lower() == required_role:
+                if request.user.role.lower() == required_role:
                     return view_function(self, request, *args, **kwargs)
                 else:
                     return Response({"Error": "User does not match role"}, status=status.HTTP_403_FORBIDDEN)

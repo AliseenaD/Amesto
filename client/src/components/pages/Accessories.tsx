@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../styles/productPages.css";
 import NavBar from "../elements/NavBar.tsx";
 import { BrandType, Product } from "../../types/productTypes.ts";
@@ -11,6 +11,7 @@ import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from "react-i
 import Footer from "../elements/Footer.tsx";
 import accessoryPic from "../../assets/accessory.avif";
 import BannerImage from "../elements/BannerImage.tsx";
+import loadingGif from "../../assets/Loading.webp";
 
 export default function Accessories() {
     const [accessories, setAccessories] = useState<Product[]>([]);
@@ -18,10 +19,9 @@ export default function Accessories() {
     const [hasNext, setHasNext] = useState<boolean>(true);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [brand, setBrand] = useState<string>('');
-    const [hasPrevious, setHasPrevious] = useState<boolean>(false);
-    const [attributeSelected, setAttributeSelected] = useState<string>('');
-    const [attributeFunction, setAttributeFunction] = useState<((page:number, brand:string) => Promise<void>) | null>(null);
+    const [hasPrevious, setHasPrevious] = useState<boolean>(false);;
     const [accessoryBrands, setAccessoryBrands] = useState<BrandType[]>([]);
+    const reference = useRef<HTMLDivElement>(null);
 
 
     // Fetch brands on page load
@@ -92,6 +92,15 @@ export default function Accessories() {
 
     // Handle the changing of brands
     const handleBrandButtonPress = (brand: string) => {
+        // Scroll to the filter menu
+        setTimeout(() => {
+            if (reference.current) {
+                console.log('scrolling to:', reference.current.offsetTop);
+                window.scrollTo({
+                    top: reference.current.offsetTop,
+                });
+            }
+        }, 50);
         setBrand(brand);
         setPage(1);
     }
@@ -106,6 +115,7 @@ export default function Accessories() {
         <>
             <NavBar />
             <BannerImage title='لوازم جانبی' image={accessoryPic} />
+            <div ref={reference}></div>
             <Fade triggerOnce direction="up">
                 <Fade direction="up" triggerOnce>
                 <div className="filter-section">
@@ -143,6 +153,11 @@ export default function Accessories() {
                     </div>
                 </Fade>
                 <div className="products-paginated-container">
+                    {isLoading && (
+                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                            <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
+                        </div>
+                    )}
                     {accessories && accessories.length === 0 ? <p>هیچ محصولی با این وجود ندارد</p> : ''}
                     {accessories && accessories.map(accessory => (
                         <ProductPageCard key={accessory.id} product={accessory} displayColor={false} displayStorage={false} />

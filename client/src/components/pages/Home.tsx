@@ -12,6 +12,8 @@ import { NewsItem, PaginatedResponse, Product } from "../../types/productTypes.t
 import NewsScroll from "../elements/NewsScroll.tsx";
 import { getNews } from "../../utility/newsApi.js";
 import IconBanner from "../elements/IconBanner.tsx";
+import { useAuthToken } from "../../AuthTokenContext.js";
+import ReactGA from "react-ga4";
 
 export default function Home() {
     const [phones, setPhones] = useState<PaginatedResponse<Product> | null >(null);
@@ -21,7 +23,12 @@ export default function Home() {
     const navigate = useNavigate();
 
     // Refresh products, only do so if the products non existent to reduce server load
+    // Also do google analytics
     useEffect(() => {
+        // Register google analytics
+        ReactGA.initialize('G-MHTGN8DDYS');
+        ReactGA.send("pageview");
+
         if (!phones && !news) {
             fetchNews();
             fetchPhones();

@@ -85,11 +85,11 @@ export default function CartProduct({ product, updateCartItem, deleteCartItem }:
                 {handleInfo()}
             </div>
             <div className="quantity-section">
-                <div className="quantity-button" id="decrease-button" onClick={() => handleQuantityChange(-1)}><IoIosRemove color="black" size={20} /></div>
+                <div className="quantity-button" id="increase-button" onClick={() => handleQuantityChange(1)}><IoIosAdd color="black" size={20} /></div>
                 <div className="quantity-container">
                     {product.quantity}
                 </div>
-                <div className="quantity-button" id="increase-button" onClick={() => handleQuantityChange(1)}><IoIosAdd color="black" size={20} /></div>
+                <div className="quantity-button" id="decrease-button" onClick={() => handleQuantityChange(-1)}><IoIosRemove color="black" size={20} /></div>
             </div>
             <button className="delete-cart-item" onClick={() => deleteCartItem(Number(product.id))}><IoTrashOutline size={30} color="red" /></button>
         </div>

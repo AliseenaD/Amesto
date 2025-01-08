@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from ..models import NewsItem
 from ..serializers import NewsSerializer
 from ..decorators import require_role
-from ..permissions import Auth0ResourceProtection
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db import transaction
 from rest_framework.response import Response
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -26,10 +26,10 @@ class NewsItemViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         # Anyone can retrieve or list
         if self.action in ['list', 'retrieve']:
-            permission_classes = [permissions.AllowAny]
+            permission_classes = [AllowAny]
         # Require permissions for create update and delete
         else:
-            permission_classes = [Auth0ResourceProtection]
+            permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
     
     # Get posts (paginated)

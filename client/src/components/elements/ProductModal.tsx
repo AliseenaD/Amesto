@@ -4,7 +4,6 @@ import { IoClose } from "react-icons/io5";
 import { TiShoppingCart } from "react-icons/ti";
 import "../styles/elementStyles.css";
 import { Fade } from "react-awesome-reveal";
-import { useAuth0 } from "@auth0/auth0-react";
 import { addToCart } from "../../utility/shoppingCartApi";
 import { useAuthToken } from "../../AuthTokenContext";
 import { toast } from 'react-toastify';
@@ -13,9 +12,8 @@ import { useCart } from "../../CartContext";
 import { CartContextType } from "../../types/productTypes";
 
 export default function ProductModal({ product, variants, handleClose }) {
-    const { loginWithRedirect, isAuthenticated } = useAuth0();
     const [selectedVariant, setSelectedVariant] = useState(variants[0]);
-    const { accessToken } = useAuthToken();
+    const { accessToken, login } = useAuthToken();
     const { incrementCart } = useCart() as CartContextType;
     
     // Ensure you cannot scroll when modal is open
@@ -52,8 +50,8 @@ export default function ProductModal({ product, variants, handleClose }) {
     // Function that will handle the shopping cart button
     async function addProduct() {
         // If not isAunthenticated redirect to login
-        if (!isAuthenticated) {
-            loginWithRedirect();
+        if (!accessToken) {
+            login();
         }
         else if (selectedVariant.quantity >= 1) {
             await addToCart(product.id, selectedVariant.id, 1, accessToken);
@@ -117,8 +115,8 @@ export default function ProductModal({ product, variants, handleClose }) {
                                 <p id="product-price">ریال</p>
                             </div>
                         </div>
-                        <button className={`cart-button ${selectedVariant.quantity >= 1 && isAuthenticated ? '' : 'unavailable'}`} onClick={addProduct}>
-                            {isAuthenticated ? (
+                        <button className={`cart-button ${selectedVariant.quantity >= 1 && accessToken ? '' : 'unavailable'}`} onClick={addProduct}>
+                            {accessToken ? (
                             <div className="modal-button-text">
                                 <TiShoppingCart size={20} />
                                 <p> به سبد خرید اضافه کنید</p>

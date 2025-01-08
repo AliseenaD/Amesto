@@ -8,6 +8,7 @@ import numeral from 'numeral';
 import { Fade } from "react-awesome-reveal";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import loadingGif from "../../../assets/Loading.webp";
 
 export default function OrderStatus() {
     const { accessToken } = useAuthToken()
@@ -208,6 +209,11 @@ export default function OrderStatus() {
             </div>
             <div className="delete-news-container">
                 <div className="order-grid">
+                    {isLoading && (
+                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                            <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
+                        </div>
+                    )}
                     {orders.map(order => (
                         <div key={order.id} className="order-card">
                             <div className="order-header">

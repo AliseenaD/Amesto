@@ -1,14 +1,14 @@
 import React from "react";
 import '../../../components/styles/profileStyles.css';
-import { useAuth0 } from "@auth0/auth0-react";
 import { ProfileProps } from "../../../types/productTypes";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { IoIosLogOut } from "react-icons/io";
 import { Fade } from "react-awesome-reveal";
 import { ImProfile } from "react-icons/im";
+import { useAuthToken } from "../../../AuthTokenContext";
 
 export default function PersonalInfo({ profile }: ProfileProps) {
-    const { logout } = useAuth0();
+    const { logout } = useAuthToken();
     console.log('Personal info:', profile);
 
     // Function to convert date to Persian date time
@@ -40,7 +40,7 @@ export default function PersonalInfo({ profile }: ProfileProps) {
                         <p id="member-header">{profile.email}</p>
                         <p id="email-specific-header">:ایمیل</p>
                     </div>
-                    <button className="logout-button" onClick={() => logout()}><IoIosLogOut size={20} color="red" />خروج</button>
+                    <button className="logout-button" onClick={logout}><IoIosLogOut size={20} color="red" />خروج</button>
                 </div>
             </div>
         </Fade>

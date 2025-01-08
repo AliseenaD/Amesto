@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../styles/productPages.css";
 import NavBar from "../elements/NavBar.tsx";
 import { BrandType, Product } from "../../types/productTypes.ts";
@@ -11,6 +11,7 @@ import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from "react-i
 import { getWatchBrands } from "../../utility/brandsApi.js";
 import watchImage from "../../assets/smartWatch.jpg";
 import BannerImage from '../elements/BannerImage.tsx';
+import loadingGif from "../../assets/Loading.webp";
 
 export default function Watches() {
     const [watches, setWatches] = useState<Product[]>([]);
@@ -22,6 +23,7 @@ export default function Watches() {
     const [attributeSelected, setAttributeSelected] = useState<string>('');
     const [attributeFunction, setAttributeFunction] = useState<((page:number, brand:string) => Promise<void>) | null>(null);
     const [watchBrands, setWatchBrands] = useState<BrandType[]>([]);
+    const reference = useRef<HTMLDivElement>(null);
     const attributes = [
         {
             title: 'افزایش قیمت',
@@ -119,6 +121,15 @@ export default function Watches() {
 
     // Function that will fetch the next page upon button press
     async function onButtonPress(increment: number) {
+        // Scroll to the filter menu
+        setTimeout(() => {
+            if (reference.current) {
+                console.log('scrolling to:', reference.current.offsetTop);
+                window.scrollTo({
+                    top: reference.current.offsetTop,
+                });
+            }
+        }, 50);
         const newPage = page + increment;
         setPage(newPage);
     }
@@ -173,6 +184,7 @@ export default function Watches() {
         <>
             <NavBar />
             <BannerImage title='ساعت' image={watchImage} />
+            <div ref={reference}></div>
             <Fade triggerOnce direction="up">
                 <Fade direction="up" triggerOnce>
                 <div className="filter-section">
@@ -231,6 +243,11 @@ export default function Watches() {
                     </div>
                 </Fade>
                 <div className="products-paginated-container">
+                    {isLoading && (
+                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                            <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
+                        </div>
+                    )}
                     {watches && watches.length === 0 ? <p>هیچ محصولی با این وجود ندارد</p> : ''}
                     {watches && watches.map(watch => (
                         <ProductPageCard key={watch.id} product={watch} displayColor={false} displayStorage={false} />

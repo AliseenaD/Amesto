@@ -1,35 +1,112 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import { requestedScopes } from "./constants";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AuthTokenContext = React.createContext();
 
 function AuthTokenProvider({ children }) {
-    const { getAccessTokenSilently, isAuthenticated } = useAuth0();
-    const [accessToken, setAccessToken] = useState();
+    const [accessToken, setAccessToken] = useState(() => localStorage.getItem('accessToken'));
+    const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem('refreshToken'));
+    const navigator = useNavigate();
 
+    // Store the access token in local storage so page refreshes will not log the user out
     useEffect(() => {
-        const getAccessToken = async () => {
-            try {
-                // get access token silently from Auth0, which will be stored in the context
-                const token = await getAccessTokenSilently({
-                    authorizationParams: {
-                        audience: process.env.REACT_APP_AUTH0_AUDIENCE,
-                        scope: requestedScopes.join(" "),
-                    },
-                });
-                setAccessToken(token);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        if (isAuthenticated) {
-            getAccessToken();
+        if (accessToken) {
+            localStorage.setItem('accessToken', accessToken);
         }
-    }, [getAccessTokenSilently, isAuthenticated]);
+        else {
+            localStorage.removeItem('accessToken');
+        }
+    }, [accessToken]);
 
-    const value = { accessToken };
+    // Store the refresh token in local storage so page refreshes will not log user out or remove it
+    useEffect(() => {
+        if (refreshToken) {
+            localStorage.setItem('refreshToken', refreshToken);
+        }
+        else {
+            localStorage.removeItem('refreshToken');
+        }
+    }, [refreshToken])
+
+    // Function to handle the login of the user
+    async function login(email, password) {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/token/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: email,
+                    password
+                })
+            });
+
+            // Check the response
+            if (!response.ok) {
+                const errorData = await response.json();  // Get the error message
+                console.log('Login error details:', errorData);
+                return false;
+            }
+
+            // MUST WAIT UNTIL ACCESS TOKEN ASSIGNED
+            // Set access token and refresh token
+            const data = await response.json();
+            setAccessToken(data.access);
+            setRefreshToken(data.refresh);
+
+            return data;
+        }
+        catch (error) {
+            console.error("Login error:", error);
+            return false;
+        }
+    }
+
+    // Clears the sessions access token for logging out
+    function logout() {
+        setAccessToken(null);
+        setRefreshToken(null);
+        // Navigate back to home page
+        navigator('/');
+    }
+
+    // Function to refresh the token 
+    async function refreshAccessToken() {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/token/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    refresh: refreshToken
+                })
+            });
+
+            // Check response
+            if (!response.ok) {
+                throw new Error("Network response failes");
+            }
+
+            const data = await response.json();
+            setAccessToken(data.access);
+            
+            return data;
+        } 
+        catch (error) {
+            console.error("Error refreshing token:", error);
+            return false;
+        }
+    }
+
+    const value = { 
+        accessToken,
+        refreshToken,
+        login,
+        refreshAccessToken,
+        logout
+    };
     return (
         <AuthTokenContext.Provider value={value}>
             { children }

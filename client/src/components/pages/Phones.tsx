@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import NavBar from "../elements/NavBar.tsx";
 import BannerImage from '../elements/BannerImage.tsx';
 import BannerPhoto from "../../assets/HomeBanner.jpg";
@@ -13,6 +13,7 @@ import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { CiCircleRemove } from "react-icons/ci";
 import { CiFilter } from "react-icons/ci";
 import { getPhoneBrands } from "../../utility/brandsApi.js";
+import loadingGif from "../../assets/Loading.webp";
 
 
 export default function Phones() {
@@ -26,6 +27,7 @@ export default function Phones() {
     const [phoneBrands, setPhoneBrands] = useState<BrandType[]>([]);
     const [attributeSelected, setAttributeSelected] = useState('');
     const [attributeFunction, setAttributeFunction] = useState<((page:number, brand:string) => Promise<void>) | null>(null);
+    const reference = useRef<HTMLDivElement>(null);
     const attributes = [
         {
             title: 'افزایش قیمت',
@@ -174,6 +176,15 @@ export default function Phones() {
 
     // Function that will fetch the next page upon button press
     async function onButtonPress(increment: number) {
+        // Scroll to the filter menu
+        setTimeout(() => {
+            if (reference.current) {
+                console.log('scrolling to:', reference.current.offsetTop);
+                window.scrollTo({
+                    top: reference.current.offsetTop,
+                });
+            }
+        }, 50);
         const newPage = page + increment;
         setPage(newPage);
     }
@@ -231,6 +242,7 @@ export default function Phones() {
         <>
             <NavBar />
             <BannerImage image={BannerPhoto} title='تلفن ها' />
+            <div ref={reference}></div>
             <Fade triggerOnce direction="up">
                 <Fade triggerOnce direction="up">
                     <div className="filter-section">
@@ -289,6 +301,11 @@ export default function Phones() {
                     </div>
                 </Fade>
                 <div className="products-paginated-container">
+                    {isLoading && (
+                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                            <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
+                        </div>
+                    )}
                     {phones && phones.length === 0 ? <p>هیچ محصولی با این وجود ندارد</p> : ''}
                     {phones && phones.map(phone => (
                         <ProductPageCard key={phone.id} product={phone} displayColor={true} displayStorage={true} />

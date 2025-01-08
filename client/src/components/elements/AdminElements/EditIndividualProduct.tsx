@@ -5,6 +5,7 @@ import { useAuthToken } from "../../../AuthTokenContext";
 import { toast } from 'react-toastify';
 import { editProduct } from "../../../utility/productsApi";
 import { IoColorPalette, IoCreate, IoTrash } from "react-icons/io5";
+import loadingGif from "../../../assets/Loading.webp";
 
 export default function EditIndividualProduct({ product, fetchProducts }: IndividualProps) {
     const { accessToken } = useAuthToken();

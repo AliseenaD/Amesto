@@ -5,7 +5,7 @@ from rest_framework.pagination import PageNumberPagination
 from ..models import OrderHistory
 from ..serializers import OrderHistorySerializer
 from ..decorators import require_role
-from ..permissions import Auth0ResourceProtection
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 # Pagination class for the orders
 class CustomOrdersPagination(PageNumberPagination):
@@ -17,7 +17,7 @@ class CustomOrdersPagination(PageNumberPagination):
 class OrderHistoryViewSet(viewsets.ModelViewSet):
     queryset = OrderHistory.objects.all()
     serializer_class = OrderHistorySerializer
-    permission_classes = [Auth0ResourceProtection]
+    permission_classes = [IsAuthenticated]
     pagination_class = CustomOrdersPagination
 
     # Function that gets all past orders

@@ -14,6 +14,7 @@ export default function Cart() {
     const { accessToken } = useAuthToken();
     const [totalCost, setTotalCost] = useState(0);
     const { updateCartCount } = useCart() as CartContextType;
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // Get the cart upon change in access token
     useEffect(() => {
@@ -32,8 +33,17 @@ export default function Cart() {
 
     // Function to get the cart
     async function getCart() {
-        const cart = await getAllCart(accessToken);
-        setUserCart(cart);
+        setIsLoading(true);
+        try {
+            const cart = await getAllCart(accessToken);
+            setUserCart(cart);
+        }
+        catch (error) {
+            console.error("An error occurred while fetching cart:", error);
+        }
+        finally {
+            setIsLoading(false);
+        }
     }
 
     // Function to set the total cost
@@ -101,7 +111,7 @@ export default function Cart() {
     return (
         <>
             <NavBar />
-            <CartCard products={userCart} orderCart={orderCart} updateCartItem={updateCart} totalCost={totalCost} deleteCartItem={deleteCartProduct} />
+            <CartCard products={userCart} isLoading={isLoading} orderCart={orderCart} updateCartItem={updateCart} totalCost={totalCost} deleteCartItem={deleteCartProduct} />
             <Footer />
         </>
     )
