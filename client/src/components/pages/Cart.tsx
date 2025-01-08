@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "../elements/NavBar.tsx";
 import { CartContextType, CartItem } from "../../types/productTypes.ts";
 import { useAuthToken } from "../../AuthTokenContext.js";
 import { updateCartItem, deleteCartItem, getAllCart } from "../../utility/shoppingCartApi.js";
@@ -110,7 +109,6 @@ export default function Cart() {
 
     return (
         <>
-            <NavBar />
             <CartCard products={userCart} isLoading={isLoading} orderCart={orderCart} updateCartItem={updateCart} totalCost={totalCost} deleteCartItem={deleteCartProduct} />
             <Footer />
         </>

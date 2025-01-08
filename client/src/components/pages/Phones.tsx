@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import NavBar from "../elements/NavBar.tsx";
 import BannerImage from '../elements/BannerImage.tsx';
 import BannerPhoto from "../../assets/HomeBanner.jpg";
 import { BrandType, Product } from "../../types/productTypes.ts";
@@ -237,10 +236,8 @@ export default function Phones() {
         return value.toString().replace(/[0-9.]/g, c => persianNumbers[c] || c);
     }
 
-
     return (
         <>
-            <NavBar />
             <BannerImage image={BannerPhoto} title='تلفن ها' />
             <div ref={reference}></div>
             <Fade triggerOnce direction="up">
@@ -301,15 +298,23 @@ export default function Phones() {
                     </div>
                 </Fade>
                 <div className="products-paginated-container">
-                    {isLoading && (
+                    {isLoading ? (
                         <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
                             <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
                         </div>
+                        ) : (
+                            <>
+                                {
+                                    phones.length === 0 ? (
+                                        <p>هیچ محصولی با این وجود ندارد</p>
+                                    ) : (
+                                        phones.map(phone => (
+                                            <ProductPageCard key={phone.id} product={phone} displayColor={false} displayStorage={false} />
+                                        ))
+                                    )
+                                }
+                            </>
                     )}
-                    {phones && phones.length === 0 ? <p>هیچ محصولی با این وجود ندارد</p> : ''}
-                    {phones && phones.map(phone => (
-                        <ProductPageCard key={phone.id} product={phone} displayColor={true} displayStorage={true} />
-                    ))}
                 </div>
                 <div className="products-page-buttons">
                     <button className="page-button" disabled={isLoading || !hasPrevious} onClick={() => onButtonPress(-1)}><MdOutlineKeyboardArrowLeft /></button>

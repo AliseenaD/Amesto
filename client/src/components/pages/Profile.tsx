@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "../elements/NavBar.tsx";
 import { useAuthToken } from "../../AuthTokenContext.js";
 import AdminForms from "../elements/AdminElements/AdminForms.tsx";
 import { getProfile } from "../../utility/profileApi.js";
@@ -36,7 +35,6 @@ export default function Profile() {
     if (loading || !profile) {
         return (
             <>
-                <NavBar />
                 <p>Loading...</p>
             </>
         )
@@ -46,7 +44,6 @@ export default function Profile() {
     if (profile.role === 'Admin') {
         return (
             <>
-                <NavBar />
                 <AdminForms />
                 <Footer />
             </>
@@ -55,7 +52,6 @@ export default function Profile() {
     else {
         return (
             <>
-                <NavBar />
                 <PersonalInfo profile={profile} />
                 <OrderStats orders={profile.order_history} />
                 <Footer />

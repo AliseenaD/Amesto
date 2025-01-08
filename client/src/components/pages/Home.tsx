@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "../elements/NavBar.tsx";
 import BannerImage from "../elements/BannerImage.tsx";
 import BannerPhoto from "../../assets/HomeBanner.jpg";
 import HeroPic from "../../assets/HeroPic.jpg";
@@ -69,7 +68,6 @@ export default function Home() {
 
     return (
         <>
-            <NavBar />
             <BannerImage title='AMESTO' image={BannerPhoto} />
             {news && <NewsScroll title='اخبار جدید' news={news} navigateFunction={() => navigateAndScroll('/news')} navigateTitle="جدید ببین" />}
             {news && <IconBanner />}

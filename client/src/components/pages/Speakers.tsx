@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import NavBar from "../elements/NavBar.tsx";
 import BannerImage from '../elements/BannerImage.tsx';
 import SpeakerImg from '../../assets/speakerHero.jpg';
 import { BrandType, Product } from "../../types/productTypes.ts";
@@ -190,7 +189,6 @@ export default function Speakers() {
 
     return(
         <>
-            <NavBar />
             <BannerImage title='بلندگوها' image={SpeakerImg} />
             <div ref={reference}></div>
             <Fade triggerOnce direction="up">
@@ -251,15 +249,23 @@ export default function Speakers() {
                     </div>
                 </Fade>
                 <div className="products-paginated-container">
-                    {isLoading && (
+                    {isLoading ? (
                         <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
                             <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
                         </div>
+                        ) : (
+                            <>
+                                {
+                                    speakers.length === 0 ? (
+                                        <p>هیچ محصولی با این وجود ندارد</p>
+                                    ) : (
+                                        speakers.map(speaker => (
+                                            <ProductPageCard key={speaker.id} product={speaker} displayColor={false} displayStorage={false} />
+                                        ))
+                                    )
+                                }
+                            </>
                     )}
-                    {speakers && speakers.length === 0 ? <p>هیچ محصولی با این وجود ندارد</p> : ''}
-                    {speakers && speakers.map(speaker => (
-                        <ProductPageCard key={speaker.id} product={speaker} displayColor={true} displayStorage={false} />
-                    ))}
                 </div>
                 <div className="products-page-buttons">
                     <button className="page-button" disabled={isLoading || !hasPrevious} onClick={() => onButtonPress(-1)}><MdOutlineKeyboardArrowLeft /></button>

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/newsStyles.css";
-import NavBar from "../elements/NavBar.tsx";
 import Footer from "../elements/Footer.tsx";
 import { NewsItem } from "../../types/productTypes.ts";
 import { getNews } from "../../utility/newsApi.js";
@@ -78,7 +77,6 @@ export default function News() {
 
     return (
         <>
-            <NavBar />
             <div className="news-content">
                 <div className="news-grid">
                     {news.map(newsItem => (

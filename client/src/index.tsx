@@ -1,7 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Auth0Provider } from '@auth0/auth0-react';
-import { requestedScopes } from './constants';
 import { AuthTokenProvider } from './AuthTokenContext';
 import { CartProvider } from './CartContext.js';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -18,6 +16,7 @@ import Headphones from './components/pages/Headphones.tsx';
 import Accessories from './components/pages/Accessories.tsx';
 import Watches from './components/pages/Watches.tsx';
 import Register from './components/pages/Register.tsx';
+import NavBar from './components/elements/NavBar.tsx';
 
 const rootElement = document.getElementById('root') as HTMLElement;
 const root = ReactDOM.createRoot(rootElement);
@@ -28,6 +27,7 @@ root.render(
           <AuthTokenProvider>
             <CartProvider>
               <ToastContainer position='top-center' />
+                <NavBar />
                 <Routes>
                   <Route path='/' element={<Home />} />
                   <Route path='/phones' element={<Phones />} />

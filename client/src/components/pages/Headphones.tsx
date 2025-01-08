@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/productPages.css";
-import NavBar from "../elements/NavBar.tsx";
 import { BrandType, Product } from "../../types/productTypes.ts";
 import { getHeadphones, getHeadphonesDecreasePrice, getHeadphonesIncreasePrice } from "../../utility/productsApi.js";
 import Footer from "../elements/Footer.tsx";
@@ -185,7 +184,6 @@ export default function Headphones() {
 
     return (
         <>
-            <NavBar />
             <BannerImage title='هدفون' image={airpodImage} />
             <div ref={reference}></div>
             <Fade triggerOnce direction="up">
@@ -246,15 +244,23 @@ export default function Headphones() {
                     </div>
                 </Fade>
                 <div className="products-paginated-container">
-                    {isLoading && (
+                    {isLoading ? (
                         <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
                             <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
                         </div>
+                        ) : (
+                            <>
+                                {
+                                    headphones.length === 0 ? (
+                                        <p>هیچ محصولی با این وجود ندارد</p>
+                                    ) : (
+                                        headphones.map(headphone => (
+                                            <ProductPageCard key={headphone.id} product={headphone} displayColor={false} displayStorage={false} />
+                                        ))
+                                    )
+                                }
+                            </>
                     )}
-                    {headphones && headphones.length === 0 ? <p>هیچ محصولی با این وجود ندارد</p> : ''}
-                    {headphones && headphones.map(headphone => (
-                        <ProductPageCard key={headphone.id} product={headphone} displayColor={true} displayStorage={false} />
-                    ))}
                 </div>
                 <div className="products-page-buttons">
                     <button className="page-button" disabled={isLoading || !hasPrevious} onClick={() => onButtonPress(-1)}><MdOutlineKeyboardArrowLeft /></button>

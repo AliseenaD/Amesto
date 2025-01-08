@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/productPages.css";
-import NavBar from "../elements/NavBar.tsx";
 import { BrandType, Product } from "../../types/productTypes.ts";
 import { getAccessories } from "../../utility/productsApi.js";
 import { getAccessoryBrands } from "../../utility/brandsApi.js";
@@ -113,7 +112,6 @@ export default function Accessories() {
 
     return (
         <>
-            <NavBar />
             <BannerImage title='لوازم جانبی' image={accessoryPic} />
             <div ref={reference}></div>
             <Fade triggerOnce direction="up">
@@ -153,15 +151,23 @@ export default function Accessories() {
                     </div>
                 </Fade>
                 <div className="products-paginated-container">
-                    {isLoading && (
-                        <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
-                            <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
-                        </div>
+                    {isLoading ? (
+                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                        <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
+                    </div>
+                    ) : (
+                        <>
+                            {
+                                accessories.length === 0 ? (
+                                    <p>هیچ محصولی با این وجود ندارد</p>
+                                ) : (
+                                    accessories.map(accessory => (
+                                        <ProductPageCard key={accessory.id} product={accessory} displayColor={false} displayStorage={false} />
+                                    ))
+                                )
+                            }
+                        </>
                     )}
-                    {accessories && accessories.length === 0 ? <p>هیچ محصولی با این وجود ندارد</p> : ''}
-                    {accessories && accessories.map(accessory => (
-                        <ProductPageCard key={accessory.id} product={accessory} displayColor={false} displayStorage={false} />
-                    ))}
                 </div>
                 <div className="products-page-buttons">
                     <button className="page-button" disabled={isLoading || !hasPrevious} onClick={() => onButtonPress(-1)}><MdOutlineKeyboardArrowLeft /></button>
