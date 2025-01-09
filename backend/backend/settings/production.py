@@ -21,8 +21,4 @@ ALLOWED_HOSTS = [
 ]
 
 # CORS settings
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'https://amesto-backend-646628537801.me-central1.run.app',
-    'https://amesto.vercel.app',
-]
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'https://amesto.vercel.app', 'https://www.amesto.ir']
