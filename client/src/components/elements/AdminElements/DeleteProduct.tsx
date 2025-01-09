@@ -8,6 +8,7 @@ import { PaginatedResponse, Product, ProductGridProps } from "../../../types/pro
 import "./adminStyles.css";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import loadingGif from "../../../assets/Loading.webp";
 
 export default function DeleteProduct() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -168,13 +169,21 @@ export default function DeleteProduct() {
                 <div className="product-category">
                     <h2 className="category-title">{title}</h2>
                 </div>
-                {products && products.length > 0 ? (
-                    <div className="product-grid">
-                        {products.map(product => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
+                {isLoading ? (
+                    <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                        <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
                     </div>
-                ): <p>هیچ محصولی با این وجود ندارد</p>}    
+                ) :
+                    <>
+                        {products && products.length > 0 ? (
+                        <div className="product-grid">
+                            {products.map(product => (
+                                <ProductCard key={product.id} product={product} />
+                            ))}
+                        </div>
+                    ): <p>هیچ محصولی با این وجود ندارد</p>}
+                    </>
+                }
             </>
         );
     }

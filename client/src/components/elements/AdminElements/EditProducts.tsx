@@ -132,18 +132,21 @@ export default function EditProducts() {
             <>
                 <div className="product-category">
                     <h2 className="category-title">{title}</h2>
-                    {isLoading && (
+                    {isLoading ? (
                         <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
                             <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
                         </div>
-                    )}
-                    {products && products.length > 0 ? (
+                    ) :
+                        <>
+                        {products && products.length > 0 ? (
                         <div className="product-grid">
                             {products.map(product => (
                                 <EditIndividualProduct fetchProducts={fetchProducts} key={product.id} product={product} />
                             ))}
                         </div>
                     ): <p>هیچ محصولی با این وجود ندارد</p>}
+                        </>
+                    }
                 </div>  
             </>
         );

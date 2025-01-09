@@ -165,18 +165,21 @@ export default function AllProducts() {
                 <div className="product-category">
                     <h2 className="category-title">{title}</h2>
                 </div>
-                {isLoading && (
+                {isLoading ? (
                     <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
                         <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
                     </div>
-                )}
-                {products && products.length > 0 ? (
-                    <div className="product-grid">
-                        {products.map(product => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
-                ): <p>هیچ محصولی با این وجود ندارد</p>}      
+                ) :
+                    <>
+                        {products && products.length > 0 ? (
+                        <div className="product-grid">
+                            {products.map(product => (
+                                <ProductCard key={product.id} product={product} />
+                            ))}
+                        </div>
+                    ): <p>هیچ محصولی با این وجود ندارد</p>}
+                    </>
+                }
             </>
         );
     }

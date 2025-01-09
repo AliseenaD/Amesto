@@ -209,39 +209,41 @@ export default function OrderStatus() {
             </div>
             <div className="delete-news-container">
                 <div className="order-grid">
-                    {isLoading && (
+                    {isLoading ? (
                         <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
                             <img alt="loading" src={loadingGif} style={{width: '150px', height: '150px', margin: '3rem'}}></img>
                         </div>
-                    )}
-                    {orders.map(order => (
-                        <div key={order.id} className="order-card">
-                            <div className="order-header">
-                            <h3 className="order-id">Order #{order.id}</h3>
-                            <span className={`order-status ${order.order_status.toLowerCase()}`}>
-                                {order.order_status}
-                            </span>
-                            </div>
-                            <div className="order-details">
-                            <p className="order-date">سفارش داده شد: {convertDate(order.order_date)}</p>
-                            <p className="order-email">Email: {order.order_email}</p>
-                            </div>
-                            <div className="order-items">
-                                {order.items.map((item, index) => (
-                                    <div key={index} className="order-item">
-                                    <span className="item-brand">{item.product.brand}</span>
-                                    <span className="item-model">{item.product.model}</span>
-                                    <span className="item-color">{item.variant.color}</span>
-                                    <span className="item-quantity">Qty: {item.quantity}</span>
+                    ) : <>
+                            {orders.map(order => (
+                                <div key={order.id} className="order-card">
+                                    <div className="order-header">
+                                    <h3 className="order-id">Order #{order.id}</h3>
+                                    <span className={`order-status ${order.order_status.toLowerCase()}`}>
+                                        {order.order_status}
+                                    </span>
                                     </div>
-                                ))}
-                            </div>
-                            <div className="order-footer">
-                                <button onClick={() => handleOrderStatusPress(order)} className="order-status-button">به روز رسانی وضعیت</button>
-                                <p className="order-total">مجموع: {toPersianNumbers(formatNumber(order.total_price))}</p>
-                            </div>
-                        </div>
-                    ))}
+                                    <div className="order-details">
+                                    <p className="order-date">سفارش داده شد: {convertDate(order.order_date)}</p>
+                                    <p className="order-email">Email: {order.order_email}</p>
+                                    </div>
+                                    <div className="order-items">
+                                        {order.items.map((item, index) => (
+                                            <div key={index} className="order-item">
+                                            <span className="item-brand">{item.product.brand}</span>
+                                            <span className="item-model">{item.product.model}</span>
+                                            <span className="item-color">{item.variant.color}</span>
+                                            <span className="item-quantity">Qty: {item.quantity}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="order-footer">
+                                        <button onClick={() => handleOrderStatusPress(order)} className="order-status-button">به روز رسانی وضعیت</button>
+                                        <p className="order-total">مجموع: {toPersianNumbers(formatNumber(order.total_price))}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </>
+                    }
                 </div>
             </div>
             <div className="pagination-buttons-container">
