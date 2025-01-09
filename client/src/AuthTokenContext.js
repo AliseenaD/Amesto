@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from 'jwt-decode';
 
 const AuthTokenContext = React.createContext();
 
@@ -28,6 +29,42 @@ function AuthTokenProvider({ children }) {
         }
     }, [refreshToken])
 
+    // Check if the token is expired and get a refresh token if needed, otherwrise log out
+    useEffect(() => {
+        const checkTokenExpiration = async () => {
+            if (accessToken && isTokenExpired(accessToken)) {
+                // Try to refresh the token
+                const refreshSuccess = await refreshAccessToken();
+                // If refresh token expired or was not able to refresh, logout
+                if (!refreshSuccess) {
+                    logout();
+                }
+            }
+        }
+
+        checkTokenExpiration();
+        // Check every minute or so
+        const interval = setInterval(checkTokenExpiration, 60000);
+        return () => clearInterval(interval);
+    }, [accessToken]);
+
+    // Check if the access token is expired so we can log out when needed
+    function isTokenExpired(token) {
+        if (!token) {
+            return true;
+        }
+
+        try {
+            // Decode the token and check to see if expiration time is before the current time or not
+            const decoded = jwtDecode(token);
+            const currentTime = Date.now() / 1000;
+            return decoded.exp < currentTime;
+        }
+        catch (error) {
+            return true;
+        }
+    }
+
     // Function to handle the login of the user
     async function login(email, password) {
         try {
@@ -49,7 +86,6 @@ function AuthTokenProvider({ children }) {
                 return false;
             }
 
-            // MUST WAIT UNTIL ACCESS TOKEN ASSIGNED
             // Set access token and refresh token
             const data = await response.json();
             setAccessToken(data.access);
@@ -73,6 +109,10 @@ function AuthTokenProvider({ children }) {
 
     // Function to refresh the token 
     async function refreshAccessToken() {
+        if (!refreshToken || isTokenExpired(refreshToken)) {
+            return false;
+        }
+
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/token/refresh`, {
                 method: 'POST',

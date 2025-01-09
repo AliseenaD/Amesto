@@ -23,7 +23,6 @@ export default function Register() {
                 setError('نام کاربری یا رمز عبور اشتباه است');
                 throw new Error("Login error");
             }
-            console.log(accessToken);
             // Now verify user with the access token
             const response = await fetch(`${process.env.REACT_APP_API_URL}/users/verify_user/`, {
                 method: 'POST',
