@@ -136,4 +136,4 @@ FIREBASE_CREDENTIALS = os.getenv('FIREBASE_CREDENTIALS')
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = False 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'https://amesto.vercel.app', 'https://www.amesto.ir']
+CORS_ALLOWED_ORIGINS = ['https://www.amesto.ir']
