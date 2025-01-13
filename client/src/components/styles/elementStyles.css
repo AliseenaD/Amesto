@@ -551,16 +551,6 @@ NAVBAR STYLES
 }
 
 @media screen and (max-width: 767px) {
-    .dropdown-links {
-        left: 90px;
-        top: -90px;
-        min-width: 150px;
-    }
-
-    .accessories-active {
-        max-height: 300px;
-    }
-
     .nav-content {
         direction: ltr;
     }
