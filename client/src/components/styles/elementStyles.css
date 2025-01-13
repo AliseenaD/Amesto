@@ -413,7 +413,7 @@ NAVBAR STYLES
 #cart {
     position: absolute;
     top: 0;
-    left: 8rem;
+    left: auto;
 }
 
 .nav-link {

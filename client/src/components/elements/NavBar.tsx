@@ -135,12 +135,11 @@ export default function NavBar() {
                             : 
                             (
                             <>
+                                {assignNews()}
                                 <li className="right-links">
                                     <button className="login-button" onClick={() => navigate('/register')}>وارد شوید</button>
                                 </li>
-                                {assignNews()}
                             </>
-                                
                             )
                         }
                     </ul>
