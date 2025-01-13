@@ -92,8 +92,8 @@ export default function ProductPageCard({ product, displayStorage, displayColor 
                         </div>
                     </div>
                     <div className="product-card-price">
-                        <p className="price-unit">ریال</p>
                         <p className="price-value">{toPersianNumbers(product.max_price)}</p>
+                        <p className="price-unit">ریال</p>
                     </div>
                 </>
                 
@@ -108,8 +108,8 @@ export default function ProductPageCard({ product, displayStorage, displayColor 
                         )) }
                     </div>
                     <div className="product-card-display-price">
-                        <p className="price-unit">ریال</p>
                         <p className="price-value">{toPersianNumbers(product.max_price)}</p>
+                        <p className="price-unit">ریال</p>
                     </div>
                 </div>
             );
@@ -117,8 +117,8 @@ export default function ProductPageCard({ product, displayStorage, displayColor 
         else {
             return (
                 <div className="product-card-price">
-                    <p className="price-unit">ریال</p>
                     <p className="price-value">{toPersianNumbers(product.max_price)}</p>
+                    <p className="price-unit">ریال</p>
                 </div>
             );
         }

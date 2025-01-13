@@ -309,7 +309,7 @@ export default function Phones() {
                                         <p>هیچ محصولی با این وجود ندارد</p>
                                     ) : (
                                         phones.map(phone => (
-                                            <ProductPageCard key={phone.id} product={phone} displayColor={false} displayStorage={false} />
+                                            <ProductPageCard key={phone.id} product={phone} displayColor={true} displayStorage={true} />
                                         ))
                                     )
                                 }
