@@ -69,7 +69,7 @@ export default function Home() {
     return (
         <>
             <BannerImage title='AMESTO' image={BannerPhoto} />
-            {news && <NewsScroll title='اخبار جدید' news={news} navigateFunction={() => navigateAndScroll('/news')} navigateTitle="جدید ببین" />}
+            {news && <NewsScroll title='بلاگ' news={news} navigateFunction={() => navigateAndScroll('/news')} navigateTitle="جدید ببین" />}
             {news && <IconBanner />}
             {phones && <CardScroll title='از مجموعه گوشی های هوشمند ما انتخاب کنید' products={phones} navigateFunction={() => navigateAndScroll('/phones')} navigateTitle="گوشی ها" />}
             {speakers && <CardScroll title='بلندگوهای پیشرفته ما را بررسی کنید' products={speakers} navigateFunction={() => navigateAndScroll('/speakers')} navigateTitle="بلندگوها" />}
