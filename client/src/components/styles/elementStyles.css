@@ -413,7 +413,7 @@ NAVBAR STYLES
 #cart {
     position: absolute;
     top: 0;
-    left: auto;
+    left: 8rem;
 }
 
 .nav-link {
@@ -553,6 +553,10 @@ NAVBAR STYLES
 @media screen and (max-width: 767px) {
     .nav-content {
         direction: ltr;
+    }
+
+    #cart {
+        left: auto;
     }
 }
 
